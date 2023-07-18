@@ -19,7 +19,8 @@ public class UserMeal {
     public LocalDateTime getDateTime() {
         return dateTime;
     }
-    public LocalDate getDate(){
+
+    public LocalDate getDate() {
         return dateTime.toLocalDate();
     }
 
