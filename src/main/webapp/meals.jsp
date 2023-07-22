@@ -13,16 +13,21 @@
         <th>Date</th>
         <th>Description</th>
         <th>Calories</th>
+        <th></th>
+        <th></th>
     </tr>
-    <jsp:useBean id="meals" scope="request" type="java.util.List"/>
+    <jsp:useBean id="meals" scope="request" type="java.util.Collection"/>
     <c:forEach items="${meals}" var="meal">
         <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.MealTo"/>
         <tr style="${meal.excess==false?'color : chartreuse':'color : crimson'}">
-            <td>${meal.date.toString()}</td>
+            <td>${meal.date.toString()} ${meal.time.toString()}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
+            <td><a href="meals?id=${meal.id}&action=delete">Delete</a></td>
+            <td><a href="meals?id=${meal.id}&action=edit">Edit</a></td>
         </tr>
     </c:forEach>
 </table>
+<a href="meals?action=new">Добавить еду</a>
 </body>
 </html>
