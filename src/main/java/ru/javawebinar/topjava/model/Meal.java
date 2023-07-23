@@ -35,16 +35,13 @@ public class Meal {
         return dateTime.toLocalDate();
     }
 
-
     public LocalTime getTime() {
         return dateTime.toLocalTime();
     }
 
-
     public Integer getId() {
         return id;
     }
-
 
     public void setId(Integer id) {
         this.id = id;
