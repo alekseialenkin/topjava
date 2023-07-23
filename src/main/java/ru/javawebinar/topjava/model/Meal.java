@@ -16,9 +16,11 @@ public class Meal {
         this.description = description;
         this.calories = calories;
     }
+
     public LocalDate getDate(){
         return dateTime.toLocalDate();
     }
+
     public LocalTime getTime(){
         return dateTime.toLocalTime();
     }
