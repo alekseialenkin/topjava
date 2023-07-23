@@ -1,52 +1,44 @@
 package ru.javawebinar.topjava.web;
 
-import ru.javawebinar.topjava.MealInMemory;
+import ru.javawebinar.topjava.StorageInMemoryMeal;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
+import ru.javawebinar.topjava.repository.Repository;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.List;
 
 public class MealServlet extends HttpServlet {
-    Collection<MealTo> meal;
-    MealInMemory m = new MealInMemory();
-
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        meal = MealsUtil.to((List<Meal>) m.getAll(), MealsUtil.CALORIES_PER_DAY);
-    }
+    private final Repository storage = new StorageInMemoryMeal();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Collection<MealTo> meal = MealsUtil.to(storage.getAll(), MealsUtil.CALORIES_PER_DAY);
         String action = req.getParameter("action");
-        String id = req.getParameter("id");
         if (action == null) {
             req.setAttribute("meals", meal);
             req.getRequestDispatcher("/meals.jsp").forward(req, resp);
             return;
         }
-        MealTo meal1;
+        Meal meal1;
         switch (action) {
             case "delete":
-                m.delete(Integer.parseInt(id));
-                meal = MealsUtil.to((List<Meal>) m.getAll(), MealsUtil.CALORIES_PER_DAY);
+                int id = Integer.parseInt(req.getParameter("id"));
+                storage.delete(id);
                 resp.sendRedirect("meals");
                 return;
             case "edit":
-                meal1 = MealsUtil.makeTo(m.get(Integer.parseInt(id)));
+                int id1 = Integer.parseInt(req.getParameter("id"));
+                meal1 = storage.get(id1);
                 break;
             case "new":
-                meal1 = new MealTo(LocalDateTime.now(),"",0,true,0);
+                meal1 = new Meal(LocalDateTime.now().withSecond(0).withNano(0), "", 0);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + action);
@@ -58,13 +50,17 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
-        Integer id = Integer.parseInt(req.getParameter("id"));
-        String date = req.getParameter("date");
+        LocalDateTime date = LocalDateTime.parse(req.getParameter("date"));
         String description = req.getParameter("desc");
-        String calories = req.getParameter("cal");
-        m.delete(id);
-        m.save(new Meal(LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")), description, Integer.parseInt(calories)));
-        req.setAttribute("meals", MealsUtil.to((List<Meal>) m.getAll(), MealsUtil.CALORIES_PER_DAY));
-        req.getRequestDispatcher("/meals.jsp").forward(req, resp);
+        int calories = Integer.parseInt(req.getParameter("cal"));
+        Meal m = new Meal(date, description, calories);
+        if (req.getParameter("id").trim().length() == 0) {
+            storage.save(m);
+        } else {
+            Integer id = Integer.parseInt(req.getParameter("id"));
+            m.setId(id);
+            storage.update(m);
+        }
+        resp.sendRedirect("meals");
     }
 }

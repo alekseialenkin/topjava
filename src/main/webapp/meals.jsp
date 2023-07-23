@@ -9,6 +9,7 @@
 <body>
 <h3><a href="index.html">Home</a></h3>
 <table border="1" cellpadding="8" cellspacing="0">
+    <caption><h3>Meals</h3></caption>
     <tr>
         <th>Date</th>
         <th>Description</th>
@@ -19,8 +20,8 @@
     <jsp:useBean id="meals" scope="request" type="java.util.Collection"/>
     <c:forEach items="${meals}" var="meal">
         <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.MealTo"/>
-        <tr style="${meal.excess==false?'color : chartreuse':'color : crimson'}">
-            <td>${meal.date.toString()} ${meal.time.toString()}</td>
+        <tr style="color: ${meal.excess?'crimson':'chartreuse'}">
+            <td>${meal.date} ${meal.time}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
             <td><a href="meals?id=${meal.id}&action=delete">Delete</a></td>

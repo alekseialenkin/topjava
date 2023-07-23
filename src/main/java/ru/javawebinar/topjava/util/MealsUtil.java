@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.util;
 
-import ru.javawebinar.topjava.MealInMemory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
 
@@ -9,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,8 +25,6 @@ public class MealsUtil {
     );
     public final static Integer CALORIES_PER_DAY = 2000;
 
-    public static final List<MealTo> mealsWithExcess = to(meals, CALORIES_PER_DAY);
-
     public static List<MealTo> filteredByCycles(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         // TODO return filtered list with excess. Implement by cycles
         return null;
@@ -37,16 +35,16 @@ public class MealsUtil {
         return null;
     }
 
-    public static List<MealTo> to(List<Meal> meals, int caloriesPerDay) {
+    public static List<MealTo> to(Collection<Meal> meals, int caloriesPerDay) {
         Map<LocalDate, Integer> sumOfCaloriesPerDay = meals.stream()
                 .collect(Collectors.toMap(Meal::getDate, Meal::getCalories, Integer::sum));
         return meals.stream()
-                .map(userMeal -> new MealTo(userMeal.getDateTime(), userMeal.getDescription(),
-                        userMeal.getCalories(), sumOfCaloriesPerDay.get(userMeal.getDate()) > caloriesPerDay, userMeal.getId()))
+                .map(userMeal -> new MealTo(userMeal.getId(),userMeal.getDateTime(), userMeal.getDescription(),
+                        userMeal.getCalories(), sumOfCaloriesPerDay.get(userMeal.getDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
     }
 
     public static MealTo makeTo(Meal meal) {
-        return new MealTo(meal.getDateTime(), meal.getDescription(), meal.getCalories(), true, meal.getId());
+        return new MealTo(meal.getId(),meal.getDateTime(), meal.getDescription(), meal.getCalories(), true);
     }
 }
