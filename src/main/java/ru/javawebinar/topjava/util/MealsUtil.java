@@ -5,7 +5,6 @@ import ru.javawebinar.topjava.model.MealTo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,28 +22,17 @@ public class MealsUtil {
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500),
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
     );
-    public final static Integer CALORIES_PER_DAY = 2000;
-
-    public static List<MealTo> filteredByCycles(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO return filtered list with excess. Implement by cycles
-        return null;
-    }
-
-    public static List<MealTo> filteredByStreams(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        // TODO Implement by streams
-        return null;
-    }
+    public final static int CALORIES_PER_DAY = 2000;
 
     public static List<MealTo> to(Collection<Meal> meals, int caloriesPerDay) {
         Map<LocalDate, Integer> sumOfCaloriesPerDay = meals.stream()
                 .collect(Collectors.toMap(Meal::getDate, Meal::getCalories, Integer::sum));
         return meals.stream()
-                .map(userMeal -> new MealTo(userMeal.getId(),userMeal.getDateTime(), userMeal.getDescription(),
-                        userMeal.getCalories(), sumOfCaloriesPerDay.get(userMeal.getDate()) > caloriesPerDay))
+                .map(userMeal -> makeTo(userMeal,sumOfCaloriesPerDay.get(userMeal.getDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
     }
 
-    public static MealTo makeTo(Meal meal) {
-        return new MealTo(meal.getId(),meal.getDateTime(), meal.getDescription(), meal.getCalories(), true);
+    public static MealTo makeTo(Meal meal,boolean excess) {
+        return new MealTo(meal.getId(),meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
 }

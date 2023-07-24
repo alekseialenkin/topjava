@@ -4,8 +4,8 @@ import ru.javawebinar.topjava.model.Meal;
 
 import java.util.Collection;
 
-public interface Repository {
-    Meal save(Meal meal);
+public interface MealRepository {
+    Meal create(Meal meal);
 
     Meal update(Meal meal);
 
