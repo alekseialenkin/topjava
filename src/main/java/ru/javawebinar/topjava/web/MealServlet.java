@@ -24,20 +24,18 @@ public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
 
     private MealRepository storage;
-    private Collection<MealTo> meals;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         storage = new InMemoryMealRepository();
-        meals = MealsUtil.to(storage.getAll(), MealsUtil.CALORIES_PER_DAY);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        meals = MealsUtil.to(storage.getAll(), MealsUtil.CALORIES_PER_DAY);
         String action = req.getParameter("action");
         if (action == null) {
+            Collection<MealTo> meals = MealsUtil.to(storage.getAll(), MealsUtil.CALORIES_PER_DAY);
             log.debug("Redirect to meals");
             req.setAttribute("meals", meals);
             req.getRequestDispatcher("/meals.jsp").forward(req, resp);

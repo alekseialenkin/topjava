@@ -24,10 +24,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     public Meal update(Meal meal) {
-        if (get(meal.getId()) == null) {
-            return null;
-        }
-        return storage.computeIfPresent(meal.getId(), ((integer, meal1) -> meal));
+        return storage.computeIfPresent(meal.getId(), ((mealId, oldValue) -> meal));
     }
 
     public Meal get(int id) {
