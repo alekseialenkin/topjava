@@ -7,6 +7,29 @@
 <head>
     <title>Meal list</title>
     <style>
+        dl {
+            background: none repeat scroll 0 0 #FAFAFA;
+            margin: 8px 0;
+            padding: 0;
+        }
+
+        dt {
+            display: inline-block;
+            width: 100px;
+        }
+
+        dd {
+            display: inline-block;
+            margin-left: 8px;
+            margin-right: 100px;
+            vertical-align: top;
+        }
+
+        button {
+            float: right;
+            margin-right: 300px;
+        }
+
         .normal {
             color: green;
         }
@@ -20,6 +43,19 @@
 <section>
     <h3><a href="index.html">Home</a></h3>
     <hr/>
+    <form method="post" action="meals">
+        <dl>
+            <dt>Start Date:</dt>
+            <dd><input type="date" name="startDate"></dd>
+            <dt>End Date:</dt>
+            <dd><input type="date" name="endDate"></dd>
+            <dt>Start Time:</dt>
+            <dd><input type="time" name="startTime"></dd>
+            <dt>End Time:</dt>
+            <dd><input type="time" name="endTime"></dd>
+        </dl>
+        <button>Отфильтровать</button>
+    </form>
     <h2>Meals</h2>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
