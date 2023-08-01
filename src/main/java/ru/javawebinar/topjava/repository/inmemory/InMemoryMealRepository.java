@@ -21,8 +21,6 @@ public class InMemoryMealRepository implements MealRepository {
 
     private final Map<Integer, Map<Integer, Meal>> mealsWithUserId = new ConcurrentHashMap<>();
 
-//    private final Map<Integer, Meal> meals = new ConcurrentHashMap<>();
-
     private final AtomicInteger counter = new AtomicInteger(0);
 
     {
