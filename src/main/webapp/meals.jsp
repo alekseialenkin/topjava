@@ -45,6 +45,7 @@
     <hr/>
     <form method="post" action="meals">
         <dl>
+            <input type="hidden" name="userId" value="${requestScope.userId}">
             <dt>Start Date:</dt>
             <dd><input type="date" name="startDate"></dd>
             <dt>End Date:</dt>

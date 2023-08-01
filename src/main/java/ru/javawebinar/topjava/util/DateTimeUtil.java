@@ -11,8 +11,8 @@ public class DateTimeUtil {
         return lt.compareTo(startTime) >= 0 && lt.compareTo(endTime) < 0;
     }
 
-    public static <T extends Comparable<T>> boolean isBetweenHalfOpen(T ltd, T startTime, T endTime) {
-        return ltd.compareTo(startTime) >= 0 && ltd.compareTo(endTime) < 0;
+    public static <T extends Comparable<T>> boolean isBetweenHalfOpen(T time, T start, T end) {
+        return time.compareTo(start) >= 0 && time.compareTo(end) < 0;
     }
 
     public static boolean isBetweenHalfOpen(LocalDateTime ld, LocalDateTime startDateTime, LocalDateTime endDateTime) {

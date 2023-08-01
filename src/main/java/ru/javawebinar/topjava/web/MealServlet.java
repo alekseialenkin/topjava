@@ -43,7 +43,8 @@ public class MealServlet extends HttpServlet {
                     LocalDate.parse(request.getParameter("startDate")), request.getParameter("endDate").isEmpty() ? LocalDate.now() :
                     LocalDate.parse(request.getParameter("endDate")), request.getParameter("startTime").isEmpty() ? LocalTime.MIN :
                     LocalTime.parse(request.getParameter("startTime")), request.getParameter("endTime").isEmpty() ? LocalTime.MAX :
-                    LocalTime.parse(request.getParameter("endTime")), SecurityUtil.authUserId()));
+                    LocalTime.parse(request.getParameter("endTime")), SecurityUtil.setAuthUserId(Integer.parseInt(request.getParameter("userId")))));
+            request.setAttribute("userId", Integer.parseInt(request.getParameter("userId")));
             request.getRequestDispatcher("/meals.jsp").forward(request, response);
         } else {
             String id = request.getParameter("id");
@@ -85,7 +86,7 @@ public class MealServlet extends HttpServlet {
             default:
                 log.info("getAll");
                 request.setAttribute("meals",
-                        repository.getAll(SecurityUtil.authUserId()));
+                        repository.getAll(Integer.parseInt(request.getParameter("userId"))));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
