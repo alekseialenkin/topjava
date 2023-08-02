@@ -20,14 +20,14 @@ import java.util.Objects;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
-    private final ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+    private ConfigurableApplicationContext appCtx;
 
-
-    private MealRestController repository;
+    private MealRestController controller;
 
     @Override
     public void init() {
-        repository = appCtx.getBean(MealRestController.class);
+        appCtx = new ClassPathXmlApplicationContext("spring/spring-app.xml");
+        controller = appCtx.getBean(MealRestController.class);
     }
 
     @Override
@@ -39,12 +39,15 @@ public class MealServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         request.setCharacterEncoding("UTF-8");
         if (request.getParameter("id") == null) {
-            request.setAttribute("meals", repository.getAllSorted(request.getParameter("startDate").isEmpty() ? LocalDate.MIN :
-                    LocalDate.parse(request.getParameter("startDate")), request.getParameter("endDate").isEmpty() ? LocalDate.now() :
-                    LocalDate.parse(request.getParameter("endDate")), request.getParameter("startTime").isEmpty() ? LocalTime.MIN :
-                    LocalTime.parse(request.getParameter("startTime")), request.getParameter("endTime").isEmpty() ? LocalTime.MAX :
-                    LocalTime.parse(request.getParameter("endTime"))));
-            request.setAttribute("userId", Integer.parseInt(request.getParameter("userId")));
+            String startDate = request.getParameter("startDate");
+            String endDate = request.getParameter("endDate");
+            String startTime = request.getParameter("startTime");
+            String endTime = request.getParameter("endTime");
+            request.setAttribute("meals", controller.getAllSorted(startDate.isEmpty() ? null :
+                    LocalDate.parse(startDate), endDate.isEmpty() ? null :
+                    LocalDate.parse(endDate), startTime.isEmpty() ? null :
+                    LocalTime.parse(startTime), endTime.isEmpty() ? null :
+                    LocalTime.parse(endDate)));
             request.getRequestDispatcher("/meals.jsp").forward(request, response);
         } else {
             String id = request.getParameter("id");
@@ -55,9 +58,9 @@ public class MealServlet extends HttpServlet {
 
             log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
             if (meal.isNew()) {
-                repository.create(meal);
+                controller.create(meal);
             } else {
-                repository.update(meal, Integer.parseInt(id));
+                controller.update(meal, Integer.parseInt(id));
             }
             response.sendRedirect("meals");
         }
@@ -71,14 +74,14 @@ public class MealServlet extends HttpServlet {
             case "delete":
                 int id = getId(request);
                 log.info("Delete id={}", id);
-                repository.delete(id);
+                controller.delete(id);
                 response.sendRedirect("meals");
                 break;
             case "create":
             case "update":
                 final Meal meal = "create".equals(action) ?
                         new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
-                        repository.get(getId(request));
+                        controller.get(getId(request));
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/mealForm.jsp").forward(request, response);
                 break;
@@ -86,7 +89,7 @@ public class MealServlet extends HttpServlet {
             default:
                 log.info("getAll");
                 request.setAttribute("meals",
-                        repository.getAll());
+                        controller.getAll());
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }

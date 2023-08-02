@@ -26,34 +26,36 @@ public class MealRestController {
 
     public List<MealTo> getAll() {
         log.info("getAll");
-        return service.getAll(SecurityUtil.authUserId(), SecurityUtil.authUserCaloriesPerDay());
+        return service.getAll(SecurityUtil.getAuthUserId(), SecurityUtil.authUserCaloriesPerDay());
     }
 
     public List<MealTo> getAllSorted(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         log.info("getAllSorted");
-        return service.getAllSorted(SecurityUtil.authUserId(), SecurityUtil.authUserCaloriesPerDay(), startDate, endDate, startTime, endTime);
+        return service.getAllSorted(SecurityUtil.getAuthUserId(), SecurityUtil.authUserCaloriesPerDay(),
+                startDate == null ? LocalDate.MIN : startDate, endDate == null ? LocalDate.MAX : endDate,
+                startTime == null ? LocalTime.MIN : startTime, endTime == null ? LocalTime.MAX : endTime);
     }
 
     public Meal get(int id) {
         log.info("get {}", id);
-        return service.get(id, SecurityUtil.authUserId());
+        return service.get(id, SecurityUtil.getAuthUserId());
     }
 
     public Meal create(Meal meal) {
         log.info("create {}", meal);
         checkNew(meal);
-        return service.create(meal, SecurityUtil.authUserId());
+        return service.create(meal, SecurityUtil.getAuthUserId());
     }
 
     public void delete(int id) {
         log.info("delete {}", id);
-        service.delete(id, SecurityUtil.authUserId());
+        service.delete(id, SecurityUtil.getAuthUserId());
     }
 
     public void update(Meal meal, int id) {
         log.info("update {} with id={}", meal, id);
         assureIdConsistent(meal, id);
-        service.update(meal, SecurityUtil.authUserId());
+        service.update(meal, SecurityUtil.getAuthUserId());
     }
 
 }
