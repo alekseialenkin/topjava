@@ -5,14 +5,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import java.util.Comparator;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
@@ -31,7 +32,7 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public Meal save(Meal meal, int userId) {
         log.info("save {}", meal);
-        Map<Integer, Meal> meals = mealsWithUserId.computeIfAbsent(userId, mealId -> new ConcurrentHashMap<>());
+        Map<Integer, Meal> meals = mealsWithUserId.computeIfAbsent(userId, idOfUser -> new ConcurrentHashMap<>());
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             meal.setUserId(userId);
@@ -45,27 +46,25 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public boolean delete(int mealId, int userId) {
         log.info("delete {}", mealId);
-        return mealsWithUserId.computeIfPresent(userId, (keyForRemove, removeValue) -> {
-            removeValue.remove(mealId);
-            return removeValue;
-        }) != null;
+        return mealsWithUserId.get(userId).remove(mealId) != null;
     }
 
     @Override
-    public Meal get(int id, int userId) {
-        log.info("get {}", id);
-        return mealsWithUserId.computeIfAbsent(userId, key -> new ConcurrentHashMap<>()).get(id);
+    public Meal get(int mealId, int userId) {
+        log.info("get {}", mealId);
+        return mealsWithUserId.getOrDefault(userId, new ConcurrentHashMap<>()).get(mealId);
     }
 
     @Override
-    public List<Meal> getAll(int userId) {
-        log.info("getAll");
-        System.out.println(mealsWithUserId);
-        return mealsWithUserId.get(userId).values()
-                .stream()
-                .sorted(Comparator.comparing(Meal::getDate)
-                        .thenComparing(Meal::getTime))
-                .collect(Collectors.toList());
+    public List<MealTo> getAll(int userId, int caloriesPerDay) {
+        return MealsUtil.getTos(mealsWithUserId.get(userId).values(), caloriesPerDay);
+    }
+
+    @Override
+    public List<MealTo> getAllSorted(int userId, int caloriesPerDay, LocalDate startDate, LocalDate endDate,
+                                     LocalTime startTime, LocalTime endTime) {
+        return MealsUtil.getFilteredTos(mealsWithUserId.get(userId).values(), caloriesPerDay, startDate, endDate,
+                startTime, endTime);
     }
 }
 

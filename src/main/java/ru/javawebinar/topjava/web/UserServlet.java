@@ -24,6 +24,6 @@ public class UserServlet extends HttpServlet {
 //        request.getRequestDispatcher("/users.jsp").forward(request, response);
         req.setAttribute("userId", SecurityUtil.setAuthUserId(Integer.parseInt(req.getParameter("userId"))));
         req.getRequestDispatcher("meals").forward(req, resp);
-
+        resp.sendRedirect("meals");
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,47 +18,42 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 @Controller
 public class MealRestController {
     private final MealService service;
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     public MealRestController(MealService service) {
         this.service = service;
     }
 
-    public List<MealTo> getAll(int userId) {
+    public List<MealTo> getAll() {
         log.info("getAll");
-        return MealsUtil.getTos(service.getAll(userId), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+        return service.getAll(SecurityUtil.authUserId(), SecurityUtil.authUserCaloriesPerDay());
     }
 
-    public List<MealTo> getAllSorted(LocalTime startTime, LocalTime endTime, int userId) {
+    public List<MealTo> getAllSorted(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         log.info("getAllSorted");
-        return MealsUtil.getFilteredByTimeTos(service.getAll(userId), MealsUtil.DEFAULT_CALORIES_PER_DAY, startTime, endTime);
+        return service.getAllSorted(SecurityUtil.authUserId(), SecurityUtil.authUserCaloriesPerDay(), startDate, endDate, startTime, endTime);
     }
 
-    public List<MealTo> getAllSorted(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime, int userId) {
-        log.info("getAllSorted");
-        return MealsUtil.getFilteredTos(service.getAll(userId), MealsUtil.DEFAULT_CALORIES_PER_DAY, startDate, endDate, startTime, endTime);
-    }
-
-    public Meal get(int id, int userId) {
+    public Meal get(int id) {
         log.info("get {}", id);
-        return service.get(id, userId);
+        return service.get(id, SecurityUtil.authUserId());
     }
 
-    public Meal create(Meal meal, int userId) {
+    public Meal create(Meal meal) {
         log.info("create {}", meal);
         checkNew(meal);
-        return service.create(meal, userId);
+        return service.create(meal, SecurityUtil.authUserId());
     }
 
-    public void delete(int id, int userId) {
+    public void delete(int id) {
         log.info("delete {}", id);
-        service.delete(id, userId);
+        service.delete(id, SecurityUtil.authUserId());
     }
 
-    public void update(Meal user, int id, int userId) {
-        log.info("update {} with id={}", user, id);
-        assureIdConsistent(user, id);
-        service.update(user, userId);
+    public void update(Meal meal, int id) {
+        log.info("update {} with id={}", meal, id);
+        assureIdConsistent(meal, id);
+        service.update(meal, SecurityUtil.authUserId());
     }
 
 }

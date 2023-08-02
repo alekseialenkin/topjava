@@ -1,7 +1,10 @@
 package ru.javawebinar.topjava.repository;
 
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.to.MealTo;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface MealRepository {
@@ -15,6 +18,8 @@ public interface MealRepository {
     // null if meal does not belong to userId
     Meal get(int mealId, int userId);
 
+    List<MealTo> getAll(int userId, int caloriesPerDay);
+
     // ORDERED dateTime desc
-    List<Meal> getAll(int userId);
+    List<MealTo> getAllSorted(int userId, int caloriesPerDay, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime);
 }
