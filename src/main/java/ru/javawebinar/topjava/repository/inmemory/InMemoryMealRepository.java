@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
@@ -23,7 +22,7 @@ public class InMemoryMealRepository implements MealRepository {
 
     private final Map<Integer, Map<Integer, Meal>> mealsWithUserId = new ConcurrentHashMap<>();
 
-    private final Map<Integer,Meal> nullMap = new ConcurrentHashMap<>();
+    private final Map<Integer, Meal> nullMap = new ConcurrentHashMap<>();
 
     private final AtomicInteger counter = new AtomicInteger(0);
 
@@ -49,7 +48,7 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public boolean delete(int mealId, int userId) {
         log.info("delete {}", mealId);
-        return mealsWithUserId.get(userId).remove(mealId) != null;
+        return mealsWithUserId.getOrDefault(userId, nullMap).remove(mealId) != null;
     }
 
     @Override
@@ -60,13 +59,13 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId, int caloriesPerDay) {
-        return new ArrayList<>(mealsWithUserId.get(userId).values());
+        return new ArrayList<>(mealsWithUserId.getOrDefault(userId, nullMap).values());
     }
 
     @Override
     public List<Meal> getAllFiltered(int userId, int caloriesPerDay, LocalDate startDate, LocalDate endDate,
-                                       LocalTime startTime, LocalTime endTime) {
-        return MealsUtil.getFiltered(mealsWithUserId.get(userId).values(), caloriesPerDay, startDate, endDate,
+                                     LocalTime startTime, LocalTime endTime) {
+        return MealsUtil.getFiltered(mealsWithUserId.getOrDefault(userId, nullMap).values(), caloriesPerDay, startDate, endDate,
                 startTime, endTime);
     }
 }
