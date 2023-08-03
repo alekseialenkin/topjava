@@ -10,6 +10,7 @@ import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,6 +22,8 @@ public class InMemoryMealRepository implements MealRepository {
     private static final Logger log = LoggerFactory.getLogger(InMemoryMealRepository.class);
 
     private final Map<Integer, Map<Integer, Meal>> mealsWithUserId = new ConcurrentHashMap<>();
+
+    private final Map<Integer,Meal> nullMap = new ConcurrentHashMap<>();
 
     private final AtomicInteger counter = new AtomicInteger(0);
 
@@ -52,18 +55,18 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public Meal get(int mealId, int userId) {
         log.info("get {}", mealId);
-        return mealsWithUserId.getOrDefault(userId, new ConcurrentHashMap<>()).get(mealId);
+        return mealsWithUserId.getOrDefault(userId, nullMap).get(mealId);
     }
 
     @Override
-    public List<MealTo> getAll(int userId, int caloriesPerDay) {
-        return MealsUtil.getTos(mealsWithUserId.get(userId).values(), caloriesPerDay);
+    public List<Meal> getAll(int userId, int caloriesPerDay) {
+        return new ArrayList<>(mealsWithUserId.get(userId).values());
     }
 
     @Override
-    public List<MealTo> getAllSorted(int userId, int caloriesPerDay, LocalDate startDate, LocalDate endDate,
-                                     LocalTime startTime, LocalTime endTime) {
-        return MealsUtil.getFilteredTos(mealsWithUserId.get(userId).values(), caloriesPerDay, startDate, endDate,
+    public List<Meal> getAllFiltered(int userId, int caloriesPerDay, LocalDate startDate, LocalDate endDate,
+                                       LocalTime startTime, LocalTime endTime) {
+        return MealsUtil.getFiltered(mealsWithUserId.get(userId).values(), caloriesPerDay, startDate, endDate,
                 startTime, endTime);
     }
 }

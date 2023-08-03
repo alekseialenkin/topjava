@@ -43,11 +43,11 @@ public class MealServlet extends HttpServlet {
             String endDate = request.getParameter("endDate");
             String startTime = request.getParameter("startTime");
             String endTime = request.getParameter("endTime");
-            request.setAttribute("meals", controller.getAllSorted(startDate.isEmpty() ? null :
+            request.setAttribute("meals", controller.getAllFiltered(startDate.isEmpty() ? null :
                     LocalDate.parse(startDate), endDate.isEmpty() ? null :
                     LocalDate.parse(endDate), startTime.isEmpty() ? null :
                     LocalTime.parse(startTime), endTime.isEmpty() ? null :
-                    LocalTime.parse(endDate)));
+                    LocalTime.parse(endTime)));
             request.getRequestDispatcher("/meals.jsp").forward(request, response);
         } else {
             String id = request.getParameter("id");

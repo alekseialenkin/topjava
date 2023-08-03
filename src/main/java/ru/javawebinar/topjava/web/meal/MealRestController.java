@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
@@ -26,14 +27,14 @@ public class MealRestController {
 
     public List<MealTo> getAll() {
         log.info("getAll");
-        return service.getAll(SecurityUtil.getAuthUserId(), SecurityUtil.authUserCaloriesPerDay());
+        return MealsUtil.getTos(service.getAll(SecurityUtil.getAuthUserId(), SecurityUtil.authUserCaloriesPerDay()), SecurityUtil.authUserCaloriesPerDay());
     }
 
-    public List<MealTo> getAllSorted(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+    public List<MealTo> getAllFiltered(LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
         log.info("getAllSorted");
-        return service.getAllSorted(SecurityUtil.getAuthUserId(), SecurityUtil.authUserCaloriesPerDay(),
+        return MealsUtil.getTos(service.getAllFiltered(SecurityUtil.getAuthUserId(), SecurityUtil.authUserCaloriesPerDay(),
                 startDate == null ? LocalDate.MIN : startDate, endDate == null ? LocalDate.MAX : endDate,
-                startTime == null ? LocalTime.MIN : startTime, endTime == null ? LocalTime.MAX : endTime);
+                startTime == null ? LocalTime.MIN : startTime, endTime == null ? LocalTime.MAX : endTime),SecurityUtil.authUserCaloriesPerDay());
     }
 
     public Meal get(int id) {

@@ -32,12 +32,12 @@ public class MealService {
         return checkNotFoundWithId(repository.get(mealId, userId), mealId);
     }
 
-    public List<MealTo> getAll(int userId, int caloriesPerDay) {
+    public List<Meal> getAll(int userId, int caloriesPerDay) {
         return repository.getAll(userId, caloriesPerDay);
     }
 
-    public List<MealTo> getAllSorted(int userId, int caloriesPerDay, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
-        return repository.getAllSorted(userId, caloriesPerDay, startDate, endDate, startTime, endTime);
+    public List<Meal> getAllFiltered(int userId, int caloriesPerDay, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+        return repository.getAllFiltered(userId, caloriesPerDay, startDate, endDate, startTime, endTime);
     }
 
     public void update(Meal meal, int userId) {
