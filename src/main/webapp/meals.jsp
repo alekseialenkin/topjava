@@ -43,16 +43,17 @@
 <section>
     <h3><a href="index.html">Home</a></h3>
     <hr/>
-    <form method="post" action="meals">
+    <form method="get" action="meals">
+        <input type="hidden" name="action" value="filter">
         <dl>
             <dt>Start Date:</dt>
-            <dd><input type="date" name="startDate"></dd>
+            <dd><input type="date" name="startDate" value="${param.get("startDate")}"></dd>
             <dt>End Date:</dt>
-            <dd><input type="date" name="endDate"></dd>
+            <dd><input type="date" name="endDate" value="${param.get('endDate')}"></dd>
             <dt>Start Time:</dt>
-            <dd><input type="time" name="startTime"></dd>
+            <dd><input type="time" name="startTime" value="${param.get('startTime')}"></dd>
             <dt>End Time:</dt>
-            <dd><input type="time" name="endTime"></dd>
+            <dd><input type="time" name="endTime" value="${param.get('endTime')}"></dd>
         </dl>
         <button>Отфильтровать</button>
     </form>

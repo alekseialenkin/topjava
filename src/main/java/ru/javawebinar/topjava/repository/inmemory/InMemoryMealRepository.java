@@ -10,10 +10,12 @@ import ru.javawebinar.topjava.util.MealsUtil;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
@@ -21,8 +23,6 @@ public class InMemoryMealRepository implements MealRepository {
     private static final Logger log = LoggerFactory.getLogger(InMemoryMealRepository.class);
 
     private final Map<Integer, Map<Integer, Meal>> mealsWithUserId = new ConcurrentHashMap<>();
-
-    private final Map<Integer, Meal> nullMap = new ConcurrentHashMap<>();
 
     private final AtomicInteger counter = new AtomicInteger(0);
 
@@ -37,7 +37,6 @@ public class InMemoryMealRepository implements MealRepository {
         Map<Integer, Meal> meals = mealsWithUserId.computeIfAbsent(userId, idOfUser -> new ConcurrentHashMap<>());
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-            meal.setUserId(userId);
             meals.put(meal.getId(), meal);
             return meal;
         }
@@ -48,24 +47,29 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public boolean delete(int mealId, int userId) {
         log.info("delete {}", mealId);
-        return mealsWithUserId.getOrDefault(userId, nullMap).remove(mealId) != null;
+        return mealsWithUserId.get(userId) != null && mealsWithUserId.get(userId).remove(mealId) != null;
     }
 
     @Override
     public Meal get(int mealId, int userId) {
         log.info("get {}", mealId);
-        return mealsWithUserId.getOrDefault(userId, nullMap).get(mealId);
+        return mealsWithUserId.get(userId) == null ? null : mealsWithUserId.get(userId).get(mealId);
     }
 
     @Override
-    public List<Meal> getAll(int userId, int caloriesPerDay) {
-        return new ArrayList<>(mealsWithUserId.getOrDefault(userId, nullMap).values());
+    public List<Meal> getAll(int userId) {
+        return mealsWithUserId.get(userId) == null ? new ArrayList<>() : mealsWithUserId.get(userId).values()
+                .stream()
+                .sorted(Comparator.comparing(Meal::getDate)
+                        .reversed())
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Meal> getAllFiltered(int userId, int caloriesPerDay, LocalDate startDate, LocalDate endDate,
+    public List<Meal> getAllFiltered(int userId, LocalDate startDate, LocalDate endDate,
                                      LocalTime startTime, LocalTime endTime) {
-        return MealsUtil.getFiltered(mealsWithUserId.getOrDefault(userId, nullMap).values(), caloriesPerDay, startDate, endDate,
+        return MealsUtil.getFiltered(mealsWithUserId.get(userId) == null ? new ArrayList<>()
+                        : mealsWithUserId.get(userId).values(), startDate, endDate,
                 startTime, endTime);
     }
 }

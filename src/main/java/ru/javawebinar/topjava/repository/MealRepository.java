@@ -17,8 +17,8 @@ public interface MealRepository {
     // null if meal does not belong to userId
     Meal get(int mealId, int userId);
 
-    List<Meal> getAll(int userId, int caloriesPerDay);
+    List<Meal> getAll(int userId);
 
     // ORDERED dateTime desc
-    List<Meal> getAllFiltered(int userId, int caloriesPerDay, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime);
+    List<Meal> getAllFiltered(int userId, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime);
 }
