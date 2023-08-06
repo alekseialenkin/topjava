@@ -47,13 +47,13 @@
         <input type="hidden" name="action" value="filter">
         <dl>
             <dt>Start Date:</dt>
-            <dd><input type="date" name="startDate" value="${param.get("startDate")}"></dd>
+            <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
             <dt>End Date:</dt>
-            <dd><input type="date" name="endDate" value="${param.get('endDate')}"></dd>
+            <dd><input type="date" name="endDate" value="${param.endDate}"></dd>
             <dt>Start Time:</dt>
-            <dd><input type="time" name="startTime" value="${param.get('startTime')}"></dd>
+            <dd><input type="time" name="startTime" value="${param.startTime}"></dd>
             <dt>End Time:</dt>
-            <dd><input type="time" name="endTime" value="${param.get('endTime')}"></dd>
+            <dd><input type="time" name="endTime" value="${param.endTime}"></dd>
         </dl>
         <button>Отфильтровать</button>
     </form>

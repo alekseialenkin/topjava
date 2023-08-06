@@ -8,8 +8,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -47,30 +46,31 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public boolean delete(int mealId, int userId) {
         log.info("delete {}", mealId);
-        return mealsWithUserId.get(userId) != null && mealsWithUserId.get(userId).remove(mealId) != null;
+        Map<Integer, Meal> mealMap = mealsWithUserId.get(userId);
+        return mealMap != null && mealMap.remove(mealId) != null;
     }
 
     @Override
     public Meal get(int mealId, int userId) {
         log.info("get {}", mealId);
-        return mealsWithUserId.get(userId) == null ? null : mealsWithUserId.get(userId).get(mealId);
+        Map<Integer, Meal> mealMap = mealsWithUserId.get(userId);
+        return mealMap == null ? null : mealMap.get(mealId);
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return mealsWithUserId.get(userId) == null ? new ArrayList<>() : mealsWithUserId.get(userId).values()
+        Map<Integer, Meal> mealMap = mealsWithUserId.get(userId);
+        return mealMap == null ? Collections.emptyList() : mealMap.values()
                 .stream()
                 .sorted(Comparator.comparing(Meal::getDate)
-                        .reversed())
+                        .thenComparing(Comparator.comparing(Meal::getTime)
+                                .reversed()))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Meal> getAllFiltered(int userId, LocalDate startDate, LocalDate endDate,
-                                     LocalTime startTime, LocalTime endTime) {
-        return MealsUtil.getFiltered(mealsWithUserId.get(userId) == null ? new ArrayList<>()
-                        : mealsWithUserId.get(userId).values(), startDate, endDate,
-                startTime, endTime);
+    public List<Meal> getAllFiltered(int userId, LocalDate startDate, LocalDate endDate) {
+        return MealsUtil.getFilteredByDate(getAll(userId), startDate, endDate);
     }
 }
 
