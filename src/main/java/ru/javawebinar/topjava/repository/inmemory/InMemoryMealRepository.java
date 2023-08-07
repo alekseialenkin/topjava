@@ -66,6 +66,4 @@ public class InMemoryMealRepository implements MealRepository {
                         .reversed())
                 .collect(Collectors.toList()), startDate, endDate);
     }
-
 }
-
