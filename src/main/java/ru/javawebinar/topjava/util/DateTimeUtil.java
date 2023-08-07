@@ -11,7 +11,7 @@ public class DateTimeUtil {
         return lt.compareTo(startTime) >= 0 && lt.compareTo(endTime) < 0;
     }
 
-    public static <T extends Comparable<T>> boolean isBetweenHalfClosed(T object, T start, T end) {
+    public static <T extends Comparable<T>> boolean isBetweenClosed(T object, T start, T end) {
         return object.compareTo(start) >= 0 && object.compareTo(end) <= 0;
     }
 

@@ -50,7 +50,7 @@ public class MealsUtil {
     }
 
     public static List<Meal> getFilteredByDate(Collection<Meal> meals, LocalDate startDate, LocalDate endDate) {
-        return filterByPredicateWithoutTos(meals, meal -> DateTimeUtil.isBetweenHalfClosed(meal.getDate(),
+        return filterByPredicateWithoutTos(meals, meal -> DateTimeUtil.isBetweenClosed(meal.getDate(),
                 startDate, endDate));
     }
 
