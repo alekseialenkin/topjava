@@ -70,6 +70,6 @@ public class InMemoryMealRepository implements MealRepository {
         if (mealMap == null) {
             return Collections.emptyList();
         }
-        return MealsUtil.getFilteredAndSortedByDate(mealMap.values());
+        return MealsUtil.getSortedByDate(mealMap.values());
     }
 }

@@ -51,7 +51,7 @@ public class MealsUtil {
                 startDate, endDate));
     }
 
-    public static List<Meal> getFilteredAndSortedByDate(Collection<Meal> meals) {
+    public static List<Meal> getSortedByDate(Collection<Meal> meals) {
         return filterAndSortByPredicateWithoutTos(meals, meal -> true);
     }
 
