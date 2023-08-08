@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Repository
@@ -58,12 +60,25 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     @Override
-    public List<Meal> getAll(int userId, LocalDate startDate, LocalDate endDate) {
+    public List<Meal> getAllFiltered(int userId, LocalDate startDate, LocalDate endDate) {
+        return filterAndSort(userId, meal -> DateTimeUtil.isBetweenClosed(meal.getDate(),
+                startDate, endDate));
+    }
+
+    @Override
+    public List<Meal> getAll(int userId) {
+        return filterAndSort(userId, meal -> true);
+    }
+
+    private List<Meal> filterAndSort(int userId, Predicate<Meal> filter) {
         Map<Integer, Meal> mealMap = mealsWithUserId.get(userId);
-        return MealsUtil.getFilteredByDate(mealMap == null ? Collections.emptyList() : mealMap.values()
-                .stream()
+        if (mealMap == null) {
+            return Collections.emptyList();
+        }
+        return mealMap.values().stream()
+                .filter(filter)
                 .sorted(Comparator.comparing(Meal::getDateTime)
                         .reversed())
-                .collect(Collectors.toList()), startDate, endDate);
+                .collect(Collectors.toList());
     }
 }
