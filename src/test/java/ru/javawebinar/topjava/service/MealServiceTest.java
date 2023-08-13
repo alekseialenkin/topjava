@@ -39,14 +39,14 @@ public class MealServiceTest {
 
     @Test
     public void get() {
-        Meal meal = service.get(1, USER_ID);
+        Meal meal = service.get(USER_MEAL_ID, USER_ID);
         assertEquals(meal, TEST_MEAL);
     }
 
     @Test
     public void delete() {
-        service.delete(1, USER_ID);
-        assertThrows(NotFoundException.class, () -> service.get(1, USER_ID));
+        service.delete(USER_MEAL_ID, USER_ID);
+        assertThrows(NotFoundException.class, () -> service.get(USER_MEAL_ID, USER_ID));
     }
 
     @Test
