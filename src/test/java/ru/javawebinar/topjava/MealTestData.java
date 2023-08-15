@@ -9,27 +9,28 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 
 public class MealTestData {
 
     public static int mealId = START_SEQ + 3;
 
-    public static final int idOfSomeMeal = START_SEQ + 5;
+    public static final int idOfSomeMeal = START_SEQ + 3;
 
     public static final int NOT_FOUND_MEAL_ID = 15;
 
     public static final Meal userMeal1 = new Meal(mealId++, LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0),
-            "Завтрак", 500);
+            "Завтрак", 1000);
 
     private static final Meal userMeal2 = new Meal(mealId++, LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0),
-            "Обед", 1000);
+            "Обед", 500);
 
     private static final Meal userMeal3 = new Meal(mealId++, LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0),
             "Ужин", 500);
 
     private static final Meal userMeal4 = new Meal(mealId++, LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0),
-            "Еда на граничное значение", 100);
+            "Еда на граничное значение", 1000);
 
     private static final Meal userMeal5 = new Meal(mealId++, LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0),
             "Завтрак", 1000);
@@ -82,5 +83,12 @@ public class MealTestData {
         updateMeal.setDescription("updatedTest");
         updateMeal.setDateTime(LocalDateTime.of(2013, Month.JANUARY, 31, 10, 0));
         return updateMeal;
+    }
+    public static void assertMatch(Meal actual, Meal expected) {
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+    }
+
+    public static void assertMatch(Iterable<Meal> actual, Iterable<Meal> expected) {
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 }
