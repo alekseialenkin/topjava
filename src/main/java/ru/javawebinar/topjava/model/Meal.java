@@ -1,30 +1,19 @@
 package ru.javawebinar.topjava.model;
 
-import org.hibernate.validator.constraints.Range;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-
-@Entity
-@Table(name = "meal")
 public class Meal extends AbstractBaseEntity {
-    @Column(name = "date_time", nullable = false)
-    @NotNull
     private LocalDateTime dateTime;
-    @Column(name = "description", nullable = false)
-    @NotBlank
+
     private String description;
-    @Column(name = "calories", nullable = false)
-    @Range(min = 10, max = 10000)
+
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
     private User user;
 
     public Meal() {
@@ -41,11 +30,11 @@ public class Meal extends AbstractBaseEntity {
         this.calories = calories;
     }
 
-    public LocalDate getDate() {
+    public LocalDate getDate(){
         return dateTime.toLocalDate();
     }
 
-    public LocalTime getTime() {
+    public LocalTime getTime(){
         return dateTime.toLocalTime();
     }
 
