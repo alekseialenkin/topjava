@@ -15,7 +15,7 @@ import java.time.LocalTime;
         @NamedQuery(name = Meal.GET, query = "SELECT m FROM Meal m WHERE m.user.id =:userId AND m.id=:id"),
         @NamedQuery(name = Meal.ALL_FILTERED, query = "SELECT m from Meal m WHERE m.user.id=:userId AND (m.dateTime >=:startDateTime" +
                 " AND m.dateTime <:endDateTime) ORDER BY m.dateTime desc "),
-        @NamedQuery(name = Meal.UPDATE, query ="UPDATE Meal m SET m.dateTime=:dateTime, m.calories=:calories, " +
+        @NamedQuery(name = Meal.UPDATE, query = "UPDATE Meal m SET m.dateTime=:dateTime, m.calories=:calories, " +
                 "m.description=:description WHERE m.user.id=:userId AND m.id=:id")
 })
 @Entity
@@ -32,15 +32,19 @@ public class Meal extends AbstractBaseEntity {
     @Column(name = "date_time", nullable = false)
     @NotNull
     private LocalDateTime dateTime;
+
     @Column(name = "description", nullable = false)
     @NotBlank
+    @Range(min = 2, max = 120)
     private String description;
+
     @Column(name = "calories", nullable = false)
     @Range(min = 10, max = 10000)
     private int calories;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
+    @NotNull
     private User user;
 
     public Meal() {
