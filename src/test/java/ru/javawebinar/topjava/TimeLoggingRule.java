@@ -14,13 +14,11 @@ public class TimeLoggingRule implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                long startTime = 0;
-                long endTime;
+                long startTime = System.currentTimeMillis();
                 try {
-                    startTime = System.currentTimeMillis();
                     base.evaluate();
                 } finally {
-                    endTime = System.currentTimeMillis();
+                    long endTime = System.currentTimeMillis();
                     log.info("Execution time of test {}: {}ms", description.getMethodName(), endTime - startTime);
                 }
             }
