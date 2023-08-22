@@ -1,8 +1,12 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Stopwatch;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,12 +32,18 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
+    private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
 
     @Autowired
     private MealService service;
 
     @Rule
-    public final TimeLoggingRule timeLogging = new TimeLoggingRule();
+    public final Stopwatch timeLogging = TimeLoggingRule.STOPWATCH;
+
+    @AfterClass
+    public static void afterClass(){
+        log.info(TimeLoggingRule.result.toString());
+    }
 
     @Test
     public void delete() {
