@@ -78,8 +78,8 @@ public class MealServiceTest {
     @Test
     @Transactional
     public void get() {
-        service.get(ADMIN_MEAL_ID,ADMIN_ID);
-        service.get(ADMIN_MEAL_ID,ADMIN_ID);
+        service.get(ADMIN_MEAL_ID, ADMIN_ID);
+        service.get(ADMIN_MEAL_ID, ADMIN_ID);
     }
 
     @Test
