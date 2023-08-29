@@ -14,13 +14,14 @@ public class TimeLoggingRule {
     public static final Stopwatch STOPWATCH = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            log.info("Execution time of test {}: {}ms", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
+            long time = TimeUnit.NANOSECONDS.toMillis(nanos);
+            log.info("Execution time of test {}: {}ms", description.getMethodName(), time);
             result.append(String.format("%-30s", description.getMethodName()))
-                    .append(String.format("%10d", TimeUnit.NANOSECONDS.toMillis(nanos))).append("ms").append("\n");
+                    .append(String.format("%10d", time)).append("ms").append("\n");
         }
     };
 
-    public static void getTestsTimeResult() {
+    public static void logTestsTimeResult() {
         log.info(result.toString());
     }
 }

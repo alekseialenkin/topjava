@@ -39,7 +39,7 @@ public class MealServiceTest {
 
     @AfterClass
     public static void afterClass() {
-        TimeLoggingRule.getTestsTimeResult();
+        TimeLoggingRule.logTestsTimeResult();
     }
 
     @Test
