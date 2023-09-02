@@ -53,4 +53,5 @@ public class DataJpaMealRepository implements MealRepository {
 
         return crudRepository.getBetween(startDateTime, endDateTime, userId);
     }
+
 }
