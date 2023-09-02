@@ -1,9 +1,6 @@
 package ru.javawebinar.topjava.service.MealServiceTests;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
@@ -62,6 +59,11 @@ public abstract class MealServiceTest {
                 "\n---------------------------------" +
                 results +
                 "\n---------------------------------");
+    }
+
+    @BeforeClass
+    public static void cleanResult() {
+        results.setLength(0);
     }
 
     @Test

@@ -1,9 +1,6 @@
 package ru.javawebinar.topjava.service.UserServiceTests;
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
@@ -60,6 +57,11 @@ public abstract class UserServiceTest {
                 "\n---------------------------------" +
                 results +
                 "\n---------------------------------");
+    }
+
+    @BeforeClass
+    public static void cleanResult() {
+        results.setLength(0);
     }
 
     @Autowired
