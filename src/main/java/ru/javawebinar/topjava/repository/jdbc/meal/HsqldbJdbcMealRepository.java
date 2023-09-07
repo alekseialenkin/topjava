@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.repository.jdbc.Meal;
+package ru.javawebinar.topjava.repository.jdbc.meal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -10,12 +10,14 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Profile("hsqldb")
+import static ru.javawebinar.topjava.Profiles.HSQL_DB;
+
+@Profile(HSQL_DB)
 @Repository
-public class HsqldbMealRepository extends JdbcMealRepository {
+public class HsqldbJdbcMealRepository extends JdbcMealRepository {
 
     @Autowired
-    public HsqldbMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    public HsqldbJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         super(jdbcTemplate, namedParameterJdbcTemplate);
     }
 

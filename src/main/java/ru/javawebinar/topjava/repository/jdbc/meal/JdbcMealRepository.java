@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.repository.jdbc.Meal;
+package ru.javawebinar.topjava.repository.jdbc.meal;
 
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;

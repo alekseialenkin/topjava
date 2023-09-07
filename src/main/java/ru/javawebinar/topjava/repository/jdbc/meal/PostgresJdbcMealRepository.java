@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.repository.jdbc.Meal;
+package ru.javawebinar.topjava.repository.jdbc.meal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -8,12 +8,14 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 
-@Profile("postgres")
+import static ru.javawebinar.topjava.Profiles.JDBC;
+
+@Profile(JDBC)
 @Repository
-public class PostgresMealRepository extends JdbcMealRepository {
+public class PostgresJdbcMealRepository extends JdbcMealRepository {
 
     @Autowired
-    public PostgresMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    public PostgresJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         super(jdbcTemplate, namedParameterJdbcTemplate);
     }
 
