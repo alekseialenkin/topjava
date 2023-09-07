@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.repository.datajpa;
 
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
@@ -32,14 +31,13 @@ public class DataJpaMealRepository implements MealRepository {
     }
 
     @Override
-    @Transactional
     public boolean delete(int id, int userId) {
         return crudRepository.delete(id, userId) != 0;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        Meal meal = DataAccessUtils.singleResult(crudRepository.findAllById(List.of(id, userId)));
+        Meal meal = crudRepository.findById(id).orElse(null);
         return meal != null && meal.getUser().getId() == userId ? meal : null;
     }
 
@@ -54,8 +52,7 @@ public class DataJpaMealRepository implements MealRepository {
     }
 
     @Override
-    @Transactional
-    public Meal getMealWithUser(int id, int userId) {
-        return crudRepository.getMealWithUser(id,userId);
+    public Meal getWithUser(int id, int userId) {
+        return crudRepository.getMealWithUser(id, userId);
     }
 }

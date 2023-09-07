@@ -52,7 +52,7 @@ public class UserService {
         checkNotFoundWithId(repository.save(user), user.id());
     }
 
-    public User getUserWithMeal(int id) {
-        return repository.getUser(id);
+    public User getWithMeal(int id) {
+        return repository.getWithMeal(id);
     }
 }

@@ -17,9 +17,9 @@ import java.time.LocalTime;
                     SELECT m FROM Meal m
                     WHERE m.user.id=:userId AND m.dateTime >= :startDateTime AND m.dateTime < :endDateTime ORDER BY m.dateTime DESC
                 """),
-        @NamedQuery(name = Meal.GET_WITH_USER,query = """
+        @NamedQuery(name = Meal.GET_WITH_USER, query = """
                 SELECT m FROM Meal m JOIN FETCH m.user
-                WHERE m.user.id =:userId and m.id =: id ORDER BY m.dateTime DESC
+                WHERE m.user.id =:userId and m.id =: id
                 """)
 //        @NamedQuery(name = Meal.UPDATE, query = "UPDATE Meal m SET m.dateTime = :datetime, m.calories= :calories," +
 //                "m.description=:desc where m.id=:id and m.user.id=:userId")
@@ -30,7 +30,7 @@ public class Meal extends AbstractBaseEntity {
     public static final String ALL_SORTED = "Meal.getAll";
     public static final String DELETE = "Meal.delete";
     public static final String GET_BETWEEN = "Meal.getBetween";
-    public static final String GET_WITH_USER = "Meal.getMealWithUser";
+    public static final String GET_WITH_USER = "Meal.getWithUser";
 
     @Column(name = "date_time", nullable = false)
     @NotNull
@@ -54,14 +54,7 @@ public class Meal extends AbstractBaseEntity {
     }
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
-        this(null, dateTime, description, calories);
-    }
-
-    public Meal(Integer id, LocalDateTime dateTime, String description, int calories) {
-        super(id);
-        this.dateTime = dateTime;
-        this.description = description;
-        this.calories = calories;
+        this(null, dateTime, description, calories, new User());
     }
 
     public Meal(Integer id, LocalDateTime dateTime, String description, int calories, User user) {
@@ -72,11 +65,11 @@ public class Meal extends AbstractBaseEntity {
         setUser(user);
     }
 
-    public LocalDate getDate(){
+    public LocalDate getDate() {
         return dateTime.toLocalDate();
     }
 
-    public LocalTime getTime(){
+    public LocalTime getTime() {
         return dateTime.toLocalTime();
     }
 
