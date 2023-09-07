@@ -18,4 +18,6 @@ public class DataJpaMealServiceTest extends MealServiceTest {
         MealTestData.MEAL_MATCHER.assertMatch(m, MealTestData.userMeal1);
         UserTestData.USER_MATCHER.assertMatch(m.getUser(), UserTestData.userWithMeal);
     }
+
+
 }

@@ -51,7 +51,7 @@ public abstract class MealServiceTest extends ServiceTest {
     @Test
     public void duplicateDateTimeCreate() {
         assertThrows(DataAccessException.class, () ->
-                service.create(new Meal(null, meal1.getDateTime(), "duplicate", 100), USER_ID));
+                service.create(new Meal(null, meal1.getDateTime(), "duplicate", 100,null), USER_ID));
     }
 
     @Test
