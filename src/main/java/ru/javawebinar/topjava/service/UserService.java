@@ -53,6 +53,6 @@ public class UserService {
     }
 
     public User getWithMeal(int id) {
-        return repository.getWithMeal(id);
+        return checkNotFoundWithId(repository.getWithMeal(id), id);
     }
 }
