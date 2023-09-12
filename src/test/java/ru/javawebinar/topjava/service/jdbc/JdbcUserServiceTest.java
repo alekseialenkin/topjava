@@ -1,7 +1,7 @@
-package ru.javawebinar.topjava.service.userservicetests.jdbc;
+package ru.javawebinar.topjava.service.jdbc;
 
 import org.springframework.test.context.ActiveProfiles;
-import ru.javawebinar.topjava.service.userservicetests.UserServiceTest;
+import ru.javawebinar.topjava.service.jpa.UserServiceTest;
 
 import static ru.javawebinar.topjava.Profiles.JDBC;
 

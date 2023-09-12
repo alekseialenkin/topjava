@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.service.userservicetests;
+package ru.javawebinar.topjava.service.jpa;
 
 import org.junit.Before;
 import org.junit.Test;

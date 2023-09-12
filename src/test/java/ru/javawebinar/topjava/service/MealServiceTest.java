@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.service.mealservicetests;
+package ru.javawebinar.topjava.service;
 
 import org.junit.Assert;
 import org.junit.Test;

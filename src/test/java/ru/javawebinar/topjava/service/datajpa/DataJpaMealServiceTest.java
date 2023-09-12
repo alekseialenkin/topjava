@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.service.mealservicetests.datajpa;
+package ru.javawebinar.topjava.service.datajpa;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -6,7 +6,7 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.service.mealservicetests.MealServiceTest;
+import ru.javawebinar.topjava.service.MealServiceTest;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import static ru.javawebinar.topjava.Profiles.DATAJPA;
