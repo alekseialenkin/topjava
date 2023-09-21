@@ -4,6 +4,7 @@
 
 <html>
 <jsp:include page="fragments/headTag.jsp"/>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <br>
