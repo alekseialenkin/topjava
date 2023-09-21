@@ -20,7 +20,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 public abstract class AbstractController {
     private static final Logger log = LoggerFactory.getLogger(AbstractController.class);
     @Autowired
-    private MealService service;
+    protected MealService service;
 
     public Meal get(int id) {
         int userId = SecurityUtil.authUserId();
