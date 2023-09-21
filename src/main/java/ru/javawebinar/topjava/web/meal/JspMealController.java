@@ -10,7 +10,6 @@ import ru.javawebinar.topjava.model.Meal;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,19 +25,19 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 public class JspMealController extends AbstractController {
 
     @GetMapping("/meals")
-    public String getMeals(Model model, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public String getMeals(Model model) {
         model.addAttribute("meals", getAll());
         return "meals";
     }
 
     @GetMapping("/meals/delete")
-    public String delete(Model model, HttpServletRequest request, HttpServletResponse response, @RequestParam int id) {
+    public String delete(Model model, @RequestParam int id) {
         delete(id);
         return "redirect:/meals";
     }
 
     @GetMapping("/meals/create")
-    public String create(Model model, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public String create(Model model) {
         Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
                 "", 1000);
         model.addAttribute("meal", meal);
@@ -53,7 +52,7 @@ public class JspMealController extends AbstractController {
     }
 
     @GetMapping("/meals/filter")
-    public String filter(Model model, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public String filter(Model model, HttpServletRequest request) throws ServletException, IOException {
         LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
         LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
         LocalTime startTime = parseLocalTime(request.getParameter("startTime"));
@@ -63,7 +62,7 @@ public class JspMealController extends AbstractController {
     }
 
     @PostMapping("/meals/save")
-    public String postMeals(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public String postMeals(HttpServletRequest request) throws IOException {
         request.setCharacterEncoding("UTF-8");
         Meal meal = new Meal(
                 LocalDateTime.parse(request.getParameter("dateTime")),
