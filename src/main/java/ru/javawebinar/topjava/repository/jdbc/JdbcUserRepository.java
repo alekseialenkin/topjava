@@ -2,16 +2,23 @@ package ru.javawebinar.topjava.repository.jdbc;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -19,6 +26,24 @@ import java.util.List;
 public class JdbcUserRepository implements UserRepository {
 
     private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
+
+    private static final ResultSetExtractor<List<User>> RESULT_SET_EXTRACTOR = rs -> {
+        List<User> list = new ArrayList<>();
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String name = rs.getString("name");
+            String email = rs.getString("email");
+            String password = rs.getString("password");
+            int caloriesPerDay = rs.getInt("calories_per_day");
+            boolean enabled = rs.getBoolean("enabled");
+            Date registered = rs.getDate("registered");
+            String role = rs.getString("role");
+            Role r = role == null ? null : Role.valueOf(role);
+            User u = new User(id, name, email, password, caloriesPerDay, enabled, registered, role == null ? List.of() : List.of(r));
+            list.add(u);
+        }
+        return list;
+    };
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -40,14 +65,29 @@ public class JdbcUserRepository implements UserRepository {
     @Transactional
     public User save(User user) {
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
-
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
             user.setId(newKey.intValue());
+            jdbcTemplate.update("INSERT INTO user_role (user_id, role) VALUES (?,?)", user.id(),
+                    String.join(",", user.getRoles().stream().map(String::valueOf).toList()));
         } else if (namedParameterJdbcTemplate.update("""
-                   UPDATE users SET name=:name, email=:email, password=:password, 
+                   UPDATE users SET name=:name, email=:email, password=:password,
                    registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
-                """, parameterSource) == 0) {
+                """, parameterSource) == 0 && namedParameterJdbcTemplate.update("UPDATE user_role SET role=:roles WHERE user_id=:id",
+                parameterSource) == 0 || jdbcTemplate.batchUpdate("""
+                   UPDATE user_role SET role=? WHERE user_id=?
+                """, new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setString(1, String.join(",", user.getRoles().stream().map(String::valueOf).toList()));
+                ps.setInt(2, user.id());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return 1;
+            }
+        }).length == 0) {
             return null;
         }
         return user;
@@ -61,19 +101,22 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User get(int id) {
-        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE id=?", ROW_MAPPER, id);
+        List<User> users = jdbcTemplate.query("SELECT * FROM users LEFT JOIN public.user_role ur on users.id = ur.user_id WHERE id=?",
+                RESULT_SET_EXTRACTOR, id);
         return DataAccessUtils.singleResult(users);
     }
 
     @Override
     public User getByEmail(String email) {
 //        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
-        List<User> users = jdbcTemplate.query("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
+        List<User> users = jdbcTemplate.query("SELECT * FROM users LEFT JOIN public.user_role ur on users.id = ur.user_id WHERE email=?",
+                RESULT_SET_EXTRACTOR, email);
         return DataAccessUtils.singleResult(users);
     }
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM users ORDER BY name, email", ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM users LEFT JOIN public.user_role ur on users.id = ur.user_id ORDER BY name,email",
+                RESULT_SET_EXTRACTOR);
     }
 }

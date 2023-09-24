@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Role;
@@ -15,14 +14,11 @@ import ru.javawebinar.topjava.repository.JpaUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertThrows;
-import static ru.javawebinar.topjava.Profiles.DATAJPA;
-import static ru.javawebinar.topjava.Profiles.JPA;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 public abstract class AbstractUserServiceTest extends AbstractServiceTest {
@@ -35,11 +31,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Autowired
     @Lazy
-    protected Environment environment;
-
-    @Autowired
-    @Lazy
-    protected JpaUtil jpaUtil;
+    private JpaUtil jpaUtil;
 
     @Before
     public void setup() {
@@ -116,8 +108,4 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "mail@yandex.ru", "password", 10001, true, new Date(), Set.of())));
     }
 
-    private boolean isJpaOrDataJpa() {
-        return Arrays.stream(environment.getActiveProfiles()).anyMatch(profile -> profile.equalsIgnoreCase(JPA)
-                || profile.equalsIgnoreCase(DATAJPA));
-    }
 }
