@@ -43,14 +43,12 @@ public class JdbcUserRepository implements UserRepository {
             Date registered = rs.getDate("registered");
             String role = rs.getString("string_agg");
             List<Role> roles = Collections.emptyList();
-            Role r;
             User u = new User(id, name, email, password, caloriesPerDay, enabled, registered, roles);
             if (role != null && role.contains(",")) {
                 roles = Arrays.stream(role.split(",")).map(Role::valueOf).toList();
                 u.setRoles(roles);
             } else if (role != null) {
-                r = Role.valueOf(role);
-                u.setRoles(List.of(r));
+                u.setRoles(List.of(Role.valueOf(role)));
             }
             list.add(u);
         }
