@@ -19,13 +19,17 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
 @Transactional(readOnly = true)
 public class JdbcUserRepository implements UserRepository {
 
-    private static final BeanPropertyRowMapper<User> ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
+    private static final BeanPropertyRowMapper<User> USER_ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
+
+    private static final BeanPropertyRowMapper<Role> ROLE_ROW_MAPPER = BeanPropertyRowMapper.newInstance(Role.class);
 
     private static final ResultSetExtractor<List<User>> RESULT_SET_EXTRACTOR = rs -> {
         List<User> list = new ArrayList<>();
@@ -37,9 +41,17 @@ public class JdbcUserRepository implements UserRepository {
             int caloriesPerDay = rs.getInt("calories_per_day");
             boolean enabled = rs.getBoolean("enabled");
             Date registered = rs.getDate("registered");
-            String role = rs.getString("role");
-            Role r = role == null ? null : Role.valueOf(role);
-            User u = new User(id, name, email, password, caloriesPerDay, enabled, registered, role == null ? List.of() : List.of(r));
+            String role = rs.getString("string_agg");
+            List<Role> roles = Collections.emptyList();
+            Role r;
+            User u = new User(id, name, email, password, caloriesPerDay, enabled, registered, roles);
+            if (role != null && role.contains(",")) {
+                roles = Arrays.stream(role.split(",")).map(Role::valueOf).toList();
+                u.setRoles(roles);
+            } else if (role != null) {
+                r = Role.valueOf(role);
+                u.setRoles(List.of(r));
+            }
             list.add(u);
         }
         return list;
@@ -101,22 +113,47 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User get(int id) {
-        List<User> users = jdbcTemplate.query("SELECT * FROM users LEFT JOIN public.user_role ur on users.id = ur.user_id WHERE id=?",
-                RESULT_SET_EXTRACTOR, id);
+        List<User> users = jdbcTemplate.query("""
+                        SELECT *
+                        FROM (
+                                 SELECT *
+                                 FROM users
+                                 WHERE id=?
+                             ) AS u
+                                 LEFT JOIN (
+                            SELECT user_id,string_agg(role, ',') FROM user_role WHERE user_id=?
+                             group by user_id) AS ur ON u.id = ur.user_id""",
+                RESULT_SET_EXTRACTOR, id, id);
         return DataAccessUtils.singleResult(users);
     }
 
     @Override
     public User getByEmail(String email) {
-//        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE email=?", ROW_MAPPER, email);
-        List<User> users = jdbcTemplate.query("SELECT * FROM users LEFT JOIN public.user_role ur on users.id = ur.user_id WHERE email=?",
+        List<User> users = jdbcTemplate.query("""
+                        SELECT *
+                        FROM (
+                                 SELECT *
+                                 FROM users
+                                 WHERE email=?
+                             ) AS u
+                                 LEFT JOIN (
+                            SELECT user_id,string_agg(role, ',') FROM user_role
+                             GROUP BY user_id) AS ur ON u.id = ur.user_id""",
                 RESULT_SET_EXTRACTOR, email);
         return DataAccessUtils.singleResult(users);
     }
 
     @Override
     public List<User> getAll() {
-        return jdbcTemplate.query("SELECT * FROM users LEFT JOIN public.user_role ur on users.id = ur.user_id ORDER BY name,email",
+        return jdbcTemplate.query("""
+                        SELECT *
+                        FROM (
+                                 SELECT *
+                                 FROM users
+                                 ORDER BY name,email
+                             ) AS u
+                                 LEFT JOIN (
+                            SELECT user_id,string_agg(role, ',') FROM user_role  group by user_id) AS ur ON u.id = ur.user_id""",
                 RESULT_SET_EXTRACTOR);
     }
 }
