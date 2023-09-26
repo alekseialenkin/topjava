@@ -16,13 +16,9 @@ import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 import ru.javawebinar.topjava.util.ValidationUtil;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Repository
 @Transactional(readOnly = true)
@@ -30,30 +26,21 @@ public class JdbcUserRepository implements UserRepository {
 
     private static final BeanPropertyRowMapper<User> USER_ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
 
-    private static final BeanPropertyRowMapper<Role> ROLE_ROW_MAPPER = BeanPropertyRowMapper.newInstance(Role.class);
-
     private static final ResultSetExtractor<List<User>> RESULT_SET_EXTRACTOR = rs -> {
-        List<User> list = new ArrayList<>();
+        List<User> userList = new ArrayList<>();
         while (rs.next()) {
-            int id = rs.getInt("id");
-            String name = rs.getString("name");
-            String email = rs.getString("email");
-            String password = rs.getString("password");
-            int caloriesPerDay = rs.getInt("calories_per_day");
-            boolean enabled = rs.getBoolean("enabled");
-            Date registered = rs.getDate("registered");
+            User u = USER_ROW_MAPPER.mapRow(rs, 8);
+            Objects.requireNonNull(u).setRoles(Collections.emptyList());
             String role = rs.getString("string_agg");
-            List<Role> roles = Collections.emptyList();
-            User u = new User(id, name, email, password, caloriesPerDay, enabled, registered, roles);
-            if (role != null && role.contains(",")) {
-                roles = Arrays.stream(role.split(",")).map(Role::valueOf).toList();
+            List<Role> roles;
+            if (role != null) {
+                roles = Arrays.stream(role.split(",")).map(s -> s.equalsIgnoreCase("admin") ? Role.ADMIN : Role.USER)
+                        .toList();
                 u.setRoles(roles);
-            } else if (role != null) {
-                u.setRoles(List.of(Role.valueOf(role)));
             }
-            list.add(u);
+            userList.add(u);
         }
-        return list;
+        return userList;
     };
 
     private final JdbcTemplate jdbcTemplate;
@@ -87,7 +74,7 @@ public class JdbcUserRepository implements UserRepository {
         } else if (namedParameterJdbcTemplate.update("""
                    UPDATE users SET name=:name, email=:email, password=:password,
                    registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
-                """, parameterSource) == 0  || jdbcTemplate.batchUpdate("""
+                """, parameterSource) == 0 || jdbcTemplate.batchUpdate("""
                    UPDATE user_role SET role=? WHERE user_id=?
                 """, new BatchPreparedStatementSetter() {
             @Override
