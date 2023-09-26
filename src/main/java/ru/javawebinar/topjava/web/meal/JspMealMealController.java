@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.javawebinar.topjava.model.Meal;
 
@@ -22,35 +23,30 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 
 
 @Controller
+@RequestMapping(value = "/meals")
 public class JspMealMealController extends AbstractMealController {
 
-    @GetMapping("/meals")
-    public String getMeals(Model model) {
-        model.addAttribute("meals", getAll());
-        return "meals";
-    }
-
-    @GetMapping("/meals/delete")
+    @GetMapping("/delete")
     public String deleteMeal(@RequestParam int id) {
         delete(id);
         return "redirect:/meals";
     }
 
-    @GetMapping("/meals/create")
+    @GetMapping("/create")
     public String create(Model model) {
         Meal meal = new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000);
         model.addAttribute("meal", meal);
         return "mealForm";
     }
 
-    @GetMapping("/meals/update")
+    @GetMapping("/update")
     public String update(Model model, @RequestParam int id) {
         Meal meal = get(id);
         model.addAttribute("meal", meal);
         return "mealForm";
     }
 
-    @GetMapping("/meals/filter")
+    @GetMapping("/filter")
     public String filter(Model model, HttpServletRequest request) throws ServletException, IOException {
         LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
         LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
@@ -60,7 +56,7 @@ public class JspMealMealController extends AbstractMealController {
         return "meals";
     }
 
-    @PostMapping("/meals")
+    @PostMapping
     public String save(HttpServletRequest request) throws IOException {
         request.setCharacterEncoding("UTF-8");
         Meal meal = new Meal(

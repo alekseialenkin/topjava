@@ -9,10 +9,9 @@
 <body>
 <jsp:include page="fragments/bodyHeader.jsp"/>
 <section>
-    <h3><a href="${pageContext.request.contextPath}/topjava"><spring:message code="app.home"/></a></h3>
     <hr/>
     <h2><spring:message code="meal.title"/></h2>
-    <form method="get" action="meals/filter">
+    <form method="get" action="${pageContext.request.contextPath}/meals/filter">
         <dl>
             <dt><spring:message code="meal.from_date"/></dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
