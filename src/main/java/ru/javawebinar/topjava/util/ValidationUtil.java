@@ -10,11 +10,11 @@ import javax.validation.*;
 import java.util.Set;
 
 public class ValidationUtil {
-    private static Validator validator = null;
+    private static final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+
+    private static final Validator validator = validatorFactory.getValidator();
 
     private ValidationUtil() {
-        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        validator = validatorFactory.getValidator();
     }
 
     public static <T> void validate(T object) {
