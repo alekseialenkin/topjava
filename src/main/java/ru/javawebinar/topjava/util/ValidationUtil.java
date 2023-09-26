@@ -10,13 +10,14 @@ import javax.validation.*;
 import java.util.Set;
 
 public class ValidationUtil {
+    private static Validator validator = null;
 
     private ValidationUtil() {
+        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
 
     public static <T> void validate(T object) {
-        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-        Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<T>> violations = validator.validate(object);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
