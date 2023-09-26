@@ -107,10 +107,12 @@ public class JdbcUserRepository implements UserRepository {
                                  SELECT *
                                  FROM users
                                  WHERE id=?
-                             ) AS u
+                            ) AS u
                                  LEFT JOIN (
-                            SELECT user_id,string_agg(role, ',') FROM user_role WHERE user_id=?
-                             group by user_id) AS ur ON u.id = ur.user_id""",
+                            SELECT user_id,string_agg(role, ',') 
+                            FROM user_role 
+                            WHERE user_id=?
+                            GROUP BY user_id) AS ur ON u.id = ur.user_id""",
                 RESULT_SET_EXTRACTOR, id, id);
         return DataAccessUtils.singleResult(users);
     }
@@ -122,12 +124,14 @@ public class JdbcUserRepository implements UserRepository {
                         FROM (
                                  SELECT *
                                  FROM users
-                                 WHERE email=?
+                                 WHERE email=?                               
                              ) AS u
                                  LEFT JOIN (
-                            SELECT user_id,string_agg(role, ',') FROM user_role
-                             GROUP BY user_id) AS ur ON u.id = ur.user_id""",
-                RESULT_SET_EXTRACTOR, email);
+                            SELECT user_id,string_agg(role, ',') 
+                            FROM user_role
+                            WHERE user_id = (SELECT id FROM users WHERE email=?)
+                            GROUP BY user_id) AS ur ON u.id = ur.user_id""",
+                RESULT_SET_EXTRACTOR, email, email);
         return DataAccessUtils.singleResult(users);
     }
 
