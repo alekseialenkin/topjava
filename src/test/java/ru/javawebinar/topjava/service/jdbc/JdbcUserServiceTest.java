@@ -26,6 +26,7 @@ public class JdbcUserServiceTest extends AbstractUserServiceTest {
     @Test
     public void a2getAll() {
         List<User> all = service.getAll();
+        System.out.println(service.get(user.id()));
         USER_MATCHER.assertMatch(all, admin, guest, user);
     }
 }

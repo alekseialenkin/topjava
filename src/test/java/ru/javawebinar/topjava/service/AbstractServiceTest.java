@@ -42,7 +42,7 @@ public abstract class AbstractServiceTest {
     @Lazy
     protected Environment environment;
 
-    protected boolean isJpaOrDataJpa() {
+    protected boolean isJpa() {
         return Arrays.stream(environment.getActiveProfiles()).anyMatch(profile -> profile.equalsIgnoreCase(JPA)
                 || profile.equalsIgnoreCase(DATAJPA));
     }
