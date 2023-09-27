@@ -31,10 +31,10 @@ public class JdbcUserRepository implements UserRepository {
         while (rs.next()) {
             User u = USER_ROW_MAPPER.mapRow(rs, 8);
             Objects.requireNonNull(u).setRoles(Collections.emptyList());
-            String role = rs.getString("string_agg");
+            String role = rs.getString("roles");
             List<Role> roles;
             if (role != null) {
-                roles = Arrays.stream(role.split(",")).map(s -> s.equalsIgnoreCase("admin") ? Role.ADMIN : Role.USER)
+                roles = Arrays.stream(role.split(",")).map(Role::valueOf)
                         .toList();
                 u.setRoles(roles);
             }
@@ -70,7 +70,7 @@ public class JdbcUserRepository implements UserRepository {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
             user.setId(newKey.intValue());
             jdbcTemplate.update("INSERT INTO user_role (user_id, role) VALUES (?,?)", user.id(),
-                    String.join(",", user.getRoles().stream().map(String::valueOf).toList()));
+                    String.join(",", user.getRoles().stream().map(Role::name).toList()));
         } else if (namedParameterJdbcTemplate.update("""
                    UPDATE users SET name=:name, email=:email, password=:password,
                    registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
@@ -79,7 +79,7 @@ public class JdbcUserRepository implements UserRepository {
                 """, new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
-                ps.setString(1, String.join(",", user.getRoles().stream().map(String::valueOf).toList()));
+                ps.setString(1, String.join(",", user.getRoles().stream().map(Role::name).toList()));
                 ps.setInt(2, user.id());
             }
 
@@ -109,7 +109,7 @@ public class JdbcUserRepository implements UserRepository {
                                  WHERE id=?
                             ) AS u
                                  LEFT JOIN (
-                            SELECT user_id,string_agg(role, ',') 
+                            SELECT user_id,string_agg(role, ',') roles
                             FROM user_role 
                             WHERE user_id=?
                             GROUP BY user_id) AS ur ON u.id = ur.user_id""",
@@ -127,7 +127,7 @@ public class JdbcUserRepository implements UserRepository {
                                  WHERE email=?                               
                              ) AS u
                                  LEFT JOIN (
-                            SELECT user_id,string_agg(role, ',') 
+                            SELECT user_id,string_agg(role, ',') roles
                             FROM user_role
                             WHERE user_id = (SELECT id FROM users WHERE email=?)
                             GROUP BY user_id) AS ur ON u.id = ur.user_id""",
@@ -145,7 +145,9 @@ public class JdbcUserRepository implements UserRepository {
                                  ORDER BY name,email
                              ) AS u
                                  LEFT JOIN (
-                            SELECT user_id,string_agg(role, ',') FROM user_role  group by user_id) AS ur ON u.id = ur.user_id""",
+                            SELECT user_id,string_agg(role, ',') roles
+                            FROM user_role 
+                            GROUP BY user_id) AS ur ON u.id = ur.user_id""",
                 RESULT_SET_EXTRACTOR);
     }
 }
