@@ -13,6 +13,7 @@ import ru.javawebinar.topjava.repository.JpaUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -48,6 +49,15 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         newUser.setId(newId);
         USER_MATCHER.assertMatch(created, newUser);
         USER_MATCHER.assertMatch(service.get(newId), newUser);
+    }
+
+    @Test
+    public void createWithoutRoles() {
+        User created = service.create(getWithoutRoles());
+        int id = created.id();
+        User newUser = getWithoutRoles();
+        newUser.setId(id);
+        USER_MATCHER.assertMatch(created, newUser);
     }
 
     @Test
@@ -89,6 +99,28 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         User updated = getUpdated();
         service.update(updated);
         USER_MATCHER.assertMatch(service.get(USER_ID), getUpdated());
+    }
+
+    @Test
+    public void updateDeletingRoles() {
+        User updated = getUpdated();
+        updated.setRoles(Collections.emptyList());
+        service.update(updated);
+        User updatedWithoutRoles = getUpdated();
+        updatedWithoutRoles.setRoles(Collections.emptyList());
+        USER_MATCHER.assertMatch(service.get(USER_ID), updatedWithoutRoles);
+    }
+
+    @Test
+    public void updateAddingRoles() {
+        User user = getWithoutRoles();
+        user.setRoles(List.of(Role.USER, Role.ADMIN));
+        service.update(user);
+        int id = user.id();
+        User userWithoutRoles = getWithoutRoles();
+        userWithoutRoles.setId(id);
+        userWithoutRoles.setRoles(List.of(Role.USER, Role.ADMIN));
+        USER_MATCHER.assertMatch(service.get(user.id()), userWithoutRoles);
     }
 
     @Test

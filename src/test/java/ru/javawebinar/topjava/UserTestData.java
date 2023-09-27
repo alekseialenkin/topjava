@@ -3,6 +3,7 @@ package ru.javawebinar.topjava;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -33,5 +34,9 @@ public class UserTestData {
         updated.setEnabled(false);
         updated.setRoles(List.of(Role.ADMIN, Role.USER));
         return updated;
+    }
+
+    public static User getWithoutRoles() {
+        return new User(null, "WithoutRoles", "WithoutRoles@gmail.com", "paSsword", 1234, false, new Date(), Collections.emptyList());
     }
 }

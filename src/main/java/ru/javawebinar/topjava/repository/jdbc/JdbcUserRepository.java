@@ -33,7 +33,7 @@ public class JdbcUserRepository implements UserRepository {
             Objects.requireNonNull(u).setRoles(Collections.emptyList());
             String role = rs.getString("roles");
             List<Role> roles;
-            if (role != null) {
+            if (role != null && !role.isEmpty()) {
                 roles = Arrays.stream(role.split(",")).map(Role::valueOf)
                         .toList();
                 u.setRoles(roles);
