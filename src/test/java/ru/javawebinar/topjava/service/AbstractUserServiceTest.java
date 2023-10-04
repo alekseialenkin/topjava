@@ -58,6 +58,7 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         User newUser = getWithoutRoles();
         newUser.setId(id);
         USER_MATCHER.assertMatch(created, newUser);
+        USER_MATCHER.assertMatch(service.get(id), newUser);
     }
 
     @Test
@@ -106,22 +107,25 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         User updated = getUpdated();
         updated.setRoles(Collections.emptyList());
         service.update(updated);
-        User updatedWithoutRoles = getUpdated();
-        updatedWithoutRoles.setRoles(Collections.emptyList());
-        USER_MATCHER.assertMatch(service.get(USER_ID), updatedWithoutRoles);
+        USER_MATCHER.assertMatch(service.get(USER_ID), updated);
     }
 
     @Test
     public void updateAddingRoles() {
-        User user = getWithoutRoles();
+        User user = new User(guest);
         user.setRoles(List.of(Role.USER, Role.ADMIN));
-        service.update(user);
-        int id = user.id();
-        User userWithoutRoles = getWithoutRoles();
-        userWithoutRoles.setId(id);
-        userWithoutRoles.setRoles(List.of(Role.USER, Role.ADMIN));
-        USER_MATCHER.assertMatch(service.get(user.id()), userWithoutRoles);
+        User updatedClone = new User(user);
+        service.update(updatedClone);
+        USER_MATCHER.assertMatch(service.get(GUEST_ID), user);
     }
+
+    @Test
+    public void reduceRole(){
+        User updated = new User(admin);
+        updated.setRoles(List.of(Role.ADMIN));
+        User updatedClone = new User(updated);
+        service.update(updatedClone);
+        USER_MATCHER.assertMatch(service.get(ADMIN_ID), updated);    }
 
     @Test
     public void getAll() {

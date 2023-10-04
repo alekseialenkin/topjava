@@ -57,6 +57,10 @@
         <context:property-placeholder location="classpath:db/tomcat.properties" system-properties-mode="OVERRIDE"/>
     </beans>
 
+    <beans profile="datajpa,jpa,jdbc">
+        <tx:annotation-driven/>
+    </beans>
+
     <beans profile="jdbc">
         <context:component-scan base-package="ru.javawebinar.**.repository.jdbc"/>
         <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
@@ -69,8 +73,6 @@
 
         <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
               p:dataSource-ref="dataSource"/>
-
-        <tx:annotation-driven/>
     </beans>
 
     <beans profile="jpa,datajpa">
@@ -105,8 +107,6 @@
                 </bean>
             </property>
         </bean>
-
-        <tx:annotation-driven/>
 
         <!-- Transaction manager for a single JPA EntityManagerFactory (alternative to JTA) -->
         <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"

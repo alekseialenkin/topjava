@@ -3,6 +3,6 @@ package ru.javawebinar.topjava.web.meal;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class MealRestMealController extends AbstractMealController {
+public class MealRestController extends AbstractMealController {
 
 }

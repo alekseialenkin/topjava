@@ -39,4 +39,5 @@ public class UserTestData {
     public static User getWithoutRoles() {
         return new User(null, "WithoutRoles", "WithoutRoles@gmail.com", "paSsword", 1234, false, new Date(), Collections.emptyList());
     }
+
 }

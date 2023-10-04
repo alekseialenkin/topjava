@@ -5,7 +5,6 @@ import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -18,30 +17,14 @@ import ru.javawebinar.topjava.util.ValidationUtil;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @Transactional(readOnly = true)
 public class JdbcUserRepository implements UserRepository {
 
     private static final BeanPropertyRowMapper<User> USER_ROW_MAPPER = BeanPropertyRowMapper.newInstance(User.class);
-
-    private static final ResultSetExtractor<List<User>> RESULT_SET_EXTRACTOR = rs -> {
-        List<User> userList = new ArrayList<>();
-        while (rs.next()) {
-            User u = USER_ROW_MAPPER.mapRow(rs, 8);
-            Objects.requireNonNull(u).setRoles(Collections.emptyList());
-            String role = rs.getString("roles");
-            List<Role> roles;
-            if (role != null && !role.isEmpty()) {
-                roles = Arrays.stream(role.split(",")).map(Role::valueOf)
-                        .toList();
-                u.setRoles(roles);
-            }
-            userList.add(u);
-        }
-        return userList;
-    };
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -69,26 +52,16 @@ public class JdbcUserRepository implements UserRepository {
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
             user.setId(newKey.intValue());
-            jdbcTemplate.update("INSERT INTO user_role (user_id, role) VALUES (?,?)", user.id(),
-                    String.join(",", user.getRoles().stream().map(Role::name).toList()));
-        } else if (namedParameterJdbcTemplate.update("""
-                   UPDATE users SET name=:name, email=:email, password=:password,
-                   registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
-                """, parameterSource) == 0 || jdbcTemplate.batchUpdate("""
-                   UPDATE user_role SET role=? WHERE user_id=?
-                """, new BatchPreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
-                ps.setString(1, String.join(",", user.getRoles().stream().map(Role::name).toList()));
-                ps.setInt(2, user.id());
+            insertRoles(user);
+        } else {
+            if (namedParameterJdbcTemplate.update("""
+                       UPDATE users SET name=:name, email=:email, password=:password,
+                       registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
+                    """, parameterSource) == 0) {
+                return null;
             }
-
-            @Override
-            public int getBatchSize() {
-                return 1;
-            }
-        }).length == 0) {
-            return null;
+            deleteRoles(user);
+            insertRoles(user);
         }
         return user;
     }
@@ -101,37 +74,36 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User get(int id) {
-        List<User> users = jdbcTemplate.query("""
-                        SELECT *
-                        FROM (
-                                 SELECT *
-                                 FROM users
-                                 WHERE id=?
-                            ) AS u
-                                 LEFT JOIN (
-                            SELECT user_id,string_agg(role, ',') roles
-                            FROM user_role 
-                            WHERE user_id=?
-                            GROUP BY user_id) AS ur ON u.id = ur.user_id""",
-                RESULT_SET_EXTRACTOR, id, id);
+        List<User> users = namedParameterJdbcTemplate.query("""
+                SELECT *
+                FROM (
+                         SELECT *
+                         FROM users
+                         WHERE id=:id
+                    ) AS u
+                         LEFT JOIN (
+                    SELECT user_id,string_agg(role, ',') roles
+                    FROM user_role 
+                    WHERE user_id=:id
+                    GROUP BY user_id) AS ur ON u.id = ur.user_id""", Map.of("id", id), USER_ROW_MAPPER);
         return DataAccessUtils.singleResult(users);
     }
 
     @Override
     public User getByEmail(String email) {
-        List<User> users = jdbcTemplate.query("""
+        List<User> users = namedParameterJdbcTemplate.query("""
                         SELECT *
                         FROM (
                                  SELECT *
                                  FROM users
-                                 WHERE email=?                               
+                                 WHERE email=:email                               
                              ) AS u
                                  LEFT JOIN (
                             SELECT user_id,string_agg(role, ',') roles
                             FROM user_role
-                            WHERE user_id = (SELECT id FROM users WHERE email=?)
-                            GROUP BY user_id) AS ur ON u.id = ur.user_id""",
-                RESULT_SET_EXTRACTOR, email, email);
+                            WHERE user_id = (SELECT id FROM users WHERE email=:email)
+                            GROUP BY user_id) AS ur ON u.id = ur.user_id""", Map.of("email", email),
+                USER_ROW_MAPPER);
         return DataAccessUtils.singleResult(users);
     }
 
@@ -148,6 +120,29 @@ public class JdbcUserRepository implements UserRepository {
                             SELECT user_id,string_agg(role, ',') roles
                             FROM user_role 
                             GROUP BY user_id) AS ur ON u.id = ur.user_id""",
-                RESULT_SET_EXTRACTOR);
+                USER_ROW_MAPPER);
+    }
+
+    private BatchPreparedStatementSetter getSetter(User user) {
+        return new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                ps.setString(2, String.join(",", user.getRoles().stream().map(Role::name).toList()));
+                ps.setInt(1, user.id());
+            }
+
+            @Override
+            public int getBatchSize() {
+                return 1;
+            }
+        };
+    }
+
+    private void deleteRoles(User user) {
+        jdbcTemplate.update("DELETE FROM user_role WHERE user_id=?", user.id());
+    }
+
+    private void insertRoles(User user) {
+        jdbcTemplate.batchUpdate("INSERT INTO user_role (user_id, role) VALUES (?,?)", getSetter(user));
     }
 }
