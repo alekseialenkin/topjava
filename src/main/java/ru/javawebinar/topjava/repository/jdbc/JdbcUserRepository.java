@@ -83,7 +83,7 @@ public class JdbcUserRepository implements UserRepository {
                     ) AS u
                          LEFT JOIN (
                     SELECT user_id,string_agg(role, ',') roles
-                    FROM user_role 
+                    FROM user_role
                     WHERE user_id=:id
                     GROUP BY user_id) AS ur ON u.id = ur.user_id""", Map.of("id", id), USER_ROW_MAPPER);
         return DataAccessUtils.singleResult(users);
@@ -96,7 +96,7 @@ public class JdbcUserRepository implements UserRepository {
                         FROM (
                                  SELECT *
                                  FROM users
-                                 WHERE email=:email                               
+                                 WHERE email=:email
                              ) AS u
                                  LEFT JOIN (
                             SELECT user_id,string_agg(role, ',') roles
@@ -118,7 +118,7 @@ public class JdbcUserRepository implements UserRepository {
                              ) AS u
                                  LEFT JOIN (
                             SELECT user_id,string_agg(role, ',') roles
-                            FROM user_role 
+                            FROM user_role
                             GROUP BY user_id) AS ur ON u.id = ur.user_id""",
                 USER_ROW_MAPPER);
     }
