@@ -10,7 +10,7 @@
     <hr>
     <h2><spring:message code="${meal.isNew() ? 'meal.add' : 'meal.edit'}"/></h2>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
-    <form method="post" action="meals">
+    <form method="post" action="<c:url value="/meals"/>">
         <input type="hidden" name="id" value="${meal.id}">
         <dl>
             <dt><spring:message code="meal.date_time"/>:</dt>
