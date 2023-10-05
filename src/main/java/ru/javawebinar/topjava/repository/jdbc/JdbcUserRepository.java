@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 import ru.javawebinar.topjava.util.ValidationUtil;
@@ -127,13 +126,13 @@ public class JdbcUserRepository implements UserRepository {
         return new BatchPreparedStatementSetter() {
             @Override
             public void setValues(PreparedStatement ps, int i) throws SQLException {
-                ps.setString(2, String.join(",", user.getRoles().stream().map(Role::name).toList()));
+                ps.setString(2, user.getRoles().stream().toList().get(i).name());
                 ps.setInt(1, user.id());
             }
 
             @Override
             public int getBatchSize() {
-                return 1;
+                return user.getRoles().size();
             }
         };
     }

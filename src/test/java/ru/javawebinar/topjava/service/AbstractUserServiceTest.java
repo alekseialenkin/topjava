@@ -120,12 +120,13 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void reduceRole(){
+    public void reduceRole() {
         User updated = new User(admin);
         updated.setRoles(List.of(Role.ADMIN));
         User updatedClone = new User(updated);
         service.update(updatedClone);
-        USER_MATCHER.assertMatch(service.get(ADMIN_ID), updated);    }
+        USER_MATCHER.assertMatch(service.get(ADMIN_ID), updated);
+    }
 
     @Test
     public void getAll() {
