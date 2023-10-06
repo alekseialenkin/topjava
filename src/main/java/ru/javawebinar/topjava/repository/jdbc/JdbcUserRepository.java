@@ -136,7 +136,7 @@ public class JdbcUserRepository implements UserRepository {
 
             @Override
             public int getBatchSize() {
-                return user.getRoles().size();
+                return roles.size();
             }
         };
     }
