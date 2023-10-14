@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.web.user;
 
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -91,6 +92,7 @@ public abstract class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getWithMeals() throws Exception {
+        Assumptions.assumeTrue(isDataJpa(List.of(environment.getActiveProfiles())));
         User newUser = new User(admin);
         List<Meal> mealList = List.of(adminMeal2, adminMeal1);
         newUser.setMeals(mealList);
