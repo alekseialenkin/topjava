@@ -32,11 +32,11 @@ public class DateTimeUtil {
 
     public static @Nullable
     LocalDate parseLocalDate(@Nullable String str) {
-        return StringUtils.hasLength(str) ? LocalDate.parse(str) : null;
+        return StringUtils.hasLength(str) && !str.equalsIgnoreCase("null") ? LocalDate.parse(str) : null;
     }
 
     public static @Nullable
     LocalTime parseLocalTime(@Nullable String str) {
-        return StringUtils.hasLength(str) ? LocalTime.parse(str) : null;
+        return StringUtils.hasLength(str) && !str.equalsIgnoreCase("null")? LocalTime.parse(str) : null;
     }
 }
