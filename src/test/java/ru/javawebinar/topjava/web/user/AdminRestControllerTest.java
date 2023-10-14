@@ -22,7 +22,7 @@ import static ru.javawebinar.topjava.MealTestData.adminMeal1;
 import static ru.javawebinar.topjava.MealTestData.adminMeal2;
 import static ru.javawebinar.topjava.UserTestData.*;
 
-class AdminRestControllerTest extends AbstractControllerTest {
+public abstract class AdminRestControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL = AdminRestController.REST_URL + '/';
 

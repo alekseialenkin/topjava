@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.web.user;
 
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -20,7 +21,7 @@ import static ru.javawebinar.topjava.MealTestData.meals;
 import static ru.javawebinar.topjava.UserTestData.*;
 import static ru.javawebinar.topjava.web.user.ProfileRestController.REST_URL;
 
-class ProfileRestControllerTest extends AbstractControllerTest {
+public abstract class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Autowired
     private UserService userService;
@@ -53,6 +54,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getWithMeals() throws Exception {
+        Assumptions.assumeTrue(isDataJpa(List.of(environment.getActiveProfiles())));
         User newUser = new User(user);
         List<Meal> mealList = new ArrayList<>(meals);
         newUser.setMeals(mealList);
