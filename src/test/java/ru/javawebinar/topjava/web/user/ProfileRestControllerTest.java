@@ -55,8 +55,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     void getWithMeals() throws Exception {
         User newUser = new User(user);
         List<Meal> mealList = new ArrayList<>(meals);
-        mealList.forEach(meal -> meal.setUser(newUser));
-        newUser.setMeals(meals);
+        newUser.setMeals(mealList);
         perform(MockMvcRequestBuilders.get(REST_URL + "/with-meals"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
