@@ -15,7 +15,7 @@ public class CustomTimeFormatter implements Formatter<LocalTime> {
     }
 
     @Override
-    public @Nullable String print(LocalTime object, @Nullable Locale locale) {
+    public String print(LocalTime object, @Nullable Locale locale) {
         return object.toString();
     }
 }

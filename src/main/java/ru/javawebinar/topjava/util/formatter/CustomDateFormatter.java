@@ -11,12 +11,12 @@ import java.util.Locale;
 public class CustomDateFormatter implements Formatter<LocalDate> {
 
     @Override
-    public @Nullable LocalDate parse(@Nullable String text, @Nullable Locale locale) throws ParseException {
+    public LocalDate parse(@Nullable String text, @Nullable Locale locale) throws ParseException {
         return DateTimeUtil.parseLocalDate(text);
     }
 
     @Override
-    public @Nullable String print(LocalDate object, @Nullable Locale locale) {
+    public String print(LocalDate object, @Nullable Locale locale) {
         return object.toString();
     }
 }
