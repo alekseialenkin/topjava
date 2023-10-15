@@ -2,6 +2,7 @@ package ru.javawebinar.topjava.web;
 
 import org.assertj.core.matcher.AssertionMatcher;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.MealsUtil;
 
@@ -11,8 +12,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static ru.javawebinar.topjava.MealTestData.meals;
+import static ru.javawebinar.topjava.Profiles.DATAJPA;
 import static ru.javawebinar.topjava.UserTestData.*;
-
+@ActiveProfiles(DATAJPA)
 class RootControllerTest extends AbstractControllerTest {
 
     @Test
