@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.util.formatter;
 
 import org.springframework.format.Formatter;
-import org.springframework.lang.Nullable;
 
 import java.text.ParseException;
 import java.time.LocalDate;
@@ -15,7 +14,7 @@ public class CustomDateFormatter implements Formatter<LocalDate> {
     }
 
     @Override
-    public String print(LocalDate object, @Nullable Locale locale) {
+    public String print(LocalDate object, Locale locale) {
         return object.toString();
     }
 }
