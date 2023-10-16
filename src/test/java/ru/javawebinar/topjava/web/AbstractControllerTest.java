@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import ru.javawebinar.topjava.ActiveDbProfileResolver;
+import ru.javawebinar.topjava.Profiles;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.List;
 //@WebAppConfiguration
 //@ExtendWith(SpringExtension.class)
 @Transactional
-@ActiveProfiles(resolver = ActiveDbProfileResolver.class)
+@ActiveProfiles(resolver = ActiveDbProfileResolver.class, profiles = Profiles.REPOSITORY_IMPLEMENTATION)
 public abstract class AbstractControllerTest {
 
     private static final CharacterEncodingFilter CHARACTER_ENCODING_FILTER = new CharacterEncodingFilter();

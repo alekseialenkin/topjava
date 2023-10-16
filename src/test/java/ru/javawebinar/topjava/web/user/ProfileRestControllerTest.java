@@ -21,7 +21,7 @@ import static ru.javawebinar.topjava.MealTestData.meals;
 import static ru.javawebinar.topjava.UserTestData.*;
 import static ru.javawebinar.topjava.web.user.ProfileRestController.REST_URL;
 
-public abstract class ProfileRestControllerTest extends AbstractControllerTest {
+public class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Autowired
     private UserService userService;
