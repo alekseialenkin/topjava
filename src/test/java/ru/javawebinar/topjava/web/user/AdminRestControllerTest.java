@@ -92,7 +92,7 @@ public class AdminRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getWithMeals() throws Exception {
-        Assumptions.assumeTrue(isDataJpa(List.of(environment.getActiveProfiles())));
+        Assumptions.assumeTrue(isDataJpa(environment));
         User newUser = new User(admin);
         List<Meal> mealList = List.of(adminMeal2, adminMeal1);
         newUser.setMeals(mealList);
