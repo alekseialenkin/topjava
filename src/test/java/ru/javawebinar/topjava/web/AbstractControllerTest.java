@@ -57,7 +57,7 @@ public abstract class AbstractControllerTest {
         return mockMvc.perform(builder);
     }
 
-    protected boolean isDataJpa(Environment environment) {
+    protected boolean isDataJpa() {
         return List.of(environment.getActiveProfiles()).contains(DATAJPA);
     }
 }

@@ -54,7 +54,7 @@ public class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getWithMeals() throws Exception {
-        Assumptions.assumeTrue(isDataJpa(environment));
+        Assumptions.assumeTrue(isDataJpa());
         User newUser = new User(user);
         List<Meal> mealList = new ArrayList<>(meals);
         newUser.setMeals(mealList);
