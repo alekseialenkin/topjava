@@ -18,27 +18,33 @@
                     <div class="row">
                         <div class="col-2">
                             <label for="startDate">От даты (включая)</label>
-                            <input type="date" class="form-control" name="startDate" id="startDate" autocomplete="off">
+                            <input type="date" class="form-control" name="startDate" id="startDate">
                         </div>
                         <div class="col-2">
                             <label for="endDate">До даты (включая)</label>
-                            <input type="date" class="form-control" name="endDate" id="endDate" autocomplete="off">
+                            <input type="date" class="form-control" name="endDate" id="endDate">
                         </div>
                         <div class="offset-2 col-3">
                             <label for="startTime">От времени (включая)</label>
-                            <input type="time" class="form-control" name="startTime" id="startTime" autocomplete="off">
+                            <input type="time" class="form-control" name="startTime" id="startTime">
                         </div>
                         <div class="col-3">
                             <label for="endTime">До времени (исключая)</label>
-                            <input type="time" class="form-control" name="endTime" id="endTime" autocomplete="off">
+                            <input type="time" class="form-control" name="endTime" id="endTime">
                         </div>
                     </div>
                 </form>
             </div>
-            <button class="btn btn-primary" onclick="ctx.updateTable()">
-                <span class="fa fa-filter"></span>
-                <spring:message code="meal.filter"/>
-            </button>
+            <div class="d-flex gap-2 justify-content-center py-5">
+                <button class="btn btn-primary" onclick="ctx.updateTable()">
+                    <span class="fa fa-filter"></span>
+                    <spring:message code="meal.filter"/>
+                </button>
+                <button class="btn btn-danger" onclick="updateTable()">
+                    <span class="fa fa-remove"></span>
+                    <spring:message code="common.cancel"/>
+                </button>
+            </div>
         </div>
     </div>
     <button class="btn btn-primary" onclick="add()">
