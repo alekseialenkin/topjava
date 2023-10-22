@@ -98,6 +98,15 @@ public class JdbcUserRepository implements UserRepository {
         return users;
     }
 
+    @Override
+    @Transactional
+    public boolean enable(int id, boolean enabled) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("enabled", enabled);
+        params.put("id", id);
+        return namedParameterJdbcTemplate.update("UPDATE users SET enabled=:enabled WHERE id=:id", params) != 0;
+    }
+
     private void insertRoles(User u) {
         Set<Role> roles = u.getRoles();
         if (!CollectionUtils.isEmpty(roles)) {
