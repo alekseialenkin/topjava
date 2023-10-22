@@ -46,9 +46,8 @@ $(function () {
     );
 });
 
-function enable(userId) {
-    const userCheckbox = document.getElementById('userEnabled');
-    const enabled = userCheckbox.checked;
+function enable(userId, checkbox) {
+    const enabled = checkbox.checked;
     $.ajax({
         type: "POST",
         url: userAjaxUrl + userId,
