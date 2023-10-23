@@ -101,7 +101,8 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     @Transactional
     public boolean enable(int id, boolean enabled) {
-        return namedParameterJdbcTemplate.update("UPDATE users SET enabled=:enabled WHERE id=:id", Map.of("enabled", enabled, "id", id)) != 0;
+        return namedParameterJdbcTemplate.update("UPDATE users SET enabled=:enabled WHERE id=:id",
+                Map.of("enabled", enabled, "id", id)) != 0;
     }
 
     private void insertRoles(User u) {
