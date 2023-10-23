@@ -52,5 +52,8 @@ function enable(userId, checkbox) {
         type: "POST",
         url: userAjaxUrl + userId,
         data: "enabled=" + enabled
-    }).done(updateTable);
+    }).done(function () {
+            checkbox.closest('tr').setAttribute('data-user-enabled', enabled);
+            successNoty(enabled ? "Enabled" : "Disabled");
+    });
 }
