@@ -43,7 +43,7 @@ public class InMemoryUserRepository extends InMemoryBaseRepository<User> impleme
         User u = map.get(id);
         if (u != null) {
             u.setEnabled(enabled);
-            return u.isEnabled();
+            return true;
         }
         return false;
     }
