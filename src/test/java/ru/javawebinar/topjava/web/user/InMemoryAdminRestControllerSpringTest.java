@@ -40,5 +40,4 @@ class InMemoryAdminRestControllerSpringTest {
         controller.enable(ADMIN_ID, false);
         Assertions.assertFalse(controller.get(ADMIN_ID).isEnabled());
     }
-
 }
