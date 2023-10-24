@@ -58,5 +58,7 @@ function enable(userId, checkbox) {
     }).done(function () {
         checkbox.closest('tr').setAttribute('data-user-enabled', enabled);
         successNoty(enabled ? "Enabled" : "Disabled");
+    }).fail(function () {
+        $(checkbox).prop("checked", !enabled);
     });
 }
