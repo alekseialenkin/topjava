@@ -12,6 +12,11 @@ const ctx = {
     }
 };
 
+function clearFilter() {
+    $('#filter')[0].reset();
+    ctx.updateTable();
+}
+
 // $(document).ready(function () {
 $(function () {
     makeEditable(
