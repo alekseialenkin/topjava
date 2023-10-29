@@ -64,4 +64,46 @@ $(function () {
             }
         })
     );
+
 });
+
+$.ajaxSetup({
+    converters: {
+        "text json": function (result) {
+            var newResult = JSON.parse(result);
+            $(newResult).each(function () {
+                this.dateTime = this.dateTime.replace("T", " ");
+            });
+            return newResult;
+        }
+    }
+});
+
+$('#startDate').datetimepicker({
+    timepicker: false,
+    format: 'Y-m-d',
+    formatDate: 'Y-m-d'
+});
+
+$('#endDate').datetimepicker({
+    timepicker: false,
+    format: 'Y-m-d',
+    formatDate: 'Y-m-d'
+});
+
+$('#startTime').datetimepicker({
+    datepicker: false,
+    format: 'H:i',
+    formatTime: 'H:i'
+});
+
+$('#endTime').datetimepicker({
+    datepicker: false,
+    format: 'H:i',
+    formatTime: 'H:i'
+})
+
+$('#dateTime').datetimepicker({
+    format: 'Y-m-d H:i'
+})
+
