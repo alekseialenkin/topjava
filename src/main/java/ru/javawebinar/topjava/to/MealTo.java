@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.to;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -20,14 +19,14 @@ public class MealTo extends BaseTo {
     @Size(min = 2, max = 120)
     private final String description;
 
-    @Column(name = "calories", nullable = false)
     @Range(min = 10, max = 5000)
-    private final int calories;
+    @NotNull
+    private final Integer calories;
 
     private final Boolean excess;
 
     @ConstructorProperties({"id", "dateTime", "description", "calories", "excess"})
-    public MealTo(Integer id, LocalDateTime dateTime, String description, int calories, Boolean excess) {
+    public MealTo(Integer id, LocalDateTime dateTime, String description, Integer calories, Boolean excess) {
         super(id);
         this.dateTime = dateTime;
         this.description = description;
