@@ -71,9 +71,11 @@ $.ajaxSetup({
     converters: {
         "text json": function (result) {
             var newResult = JSON.parse(result);
-            $(newResult).each(function () {
-                this.dateTime = this.dateTime.substring(0,16).replace("T", " ");
-            });
+            if (newResult.type === 'object') {
+                $(newResult).each(function () {
+                    this.dateTime = this.dateTime.substring(0, 16).replace("T", " ");
+                });
+            }
             return newResult;
         }
     }
