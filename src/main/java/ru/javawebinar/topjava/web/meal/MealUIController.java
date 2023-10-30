@@ -8,7 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.web.UIUtil;
+import ru.javawebinar.topjava.util.ValidationUtil;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -41,7 +41,7 @@ public class MealUIController extends AbstractMealController {
     @PostMapping
     public ResponseEntity<String> create(@Valid MealTo mealTo, BindingResult result) {
         if (result.hasErrors()) {
-            return UIUtil.getErrors(result);
+            return ValidationUtil.getResponseErrors(result);
         }
         if (mealTo.isNew()) {
             super.create(mealTo);
