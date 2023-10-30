@@ -10,9 +10,11 @@ import java.beans.ConstructorProperties;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static ru.javawebinar.topjava.util.DateTimeUtil.DATE_TIME_PATTERN;
+
 public class MealTo extends BaseTo {
     @NotNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @DateTimeFormat(pattern = DATE_TIME_PATTERN)
     private final LocalDateTime dateTime;
 
     @NotBlank
@@ -55,12 +57,16 @@ public class MealTo extends BaseTo {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MealTo mealTo = (MealTo) o;
-        return Objects.equals(dateTime, mealTo.dateTime) && Objects.equals(description, mealTo.description) && Objects.equals(calories, mealTo.calories) && Objects.equals(excess, mealTo.excess);
+        return Objects.equals(calories, mealTo.calories) &&
+                excess == mealTo.excess &&
+                Objects.equals(id, mealTo.id) &&
+                Objects.equals(dateTime, mealTo.dateTime) &&
+                Objects.equals(description, mealTo.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dateTime, description, calories, excess);
+        return Objects.hash(id, dateTime, description, calories, excess);
     }
 
     @Override
