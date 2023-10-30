@@ -39,7 +39,6 @@ public class MealUIController extends AbstractMealController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<String> create(@Valid MealTo mealTo, BindingResult result) {
         if (result.hasErrors()) {
             return UIUtil.getErrors(result);
