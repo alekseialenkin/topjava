@@ -72,7 +72,7 @@ $.ajaxSetup({
         "text json": function (result) {
             var newResult = JSON.parse(result);
             $(newResult).each(function () {
-                this.dateTime = this.dateTime.replace("T", " ");
+                this.dateTime = this.dateTime.substring(0,16).replace("T", " ");
             });
             return newResult;
         }
