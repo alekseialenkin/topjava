@@ -71,9 +71,11 @@ $.ajaxSetup({
     converters: {
         "text json": function (result) {
             var newResult = JSON.parse(result);
-            if (newResult.type === 'object') {
+            if (typeof newResult === 'object') {
                 $(newResult).each(function () {
-                    this.dateTime = this.dateTime.substring(0, 16).replace("T", " ");
+                    if (this.hasOwnProperty('dateTime')) {
+                        this.dateTime = this.dateTime.substring(0, 16).replace("T", " ");
+                    }
                 });
             }
             return newResult;
@@ -85,9 +87,9 @@ $('#startDate').datetimepicker({
     timepicker: false,
     format: 'Y-m-d',
     formatDate: 'Y-m-d',
-    onShow:function( ct ){
+    onShow: function (ct) {
         this.setOptions({
-            maxDate:jQuery('#endDate').val()?jQuery('#endDate').val():false
+            maxDate: jQuery('#endDate').val() ? jQuery('#endDate').val() : false
         })
     },
 });
@@ -96,9 +98,9 @@ $('#endDate').datetimepicker({
     timepicker: false,
     format: 'Y-m-d',
     formatDate: 'Y-m-d',
-    onShow:function( ct ){
+    onShow: function (ct) {
         this.setOptions({
-            minDate:jQuery('#startDate').val()?jQuery('#startDate').val():false
+            minDate: jQuery('#startDate').val() ? jQuery('#startDate').val() : false
         })
     },
 });
@@ -107,9 +109,9 @@ $('#startTime').datetimepicker({
     datepicker: false,
     format: 'H:i',
     formatTime: 'H:i',
-    onShow:function( ct ){
+    onShow: function (ct) {
         this.setOptions({
-            maxTime:jQuery('#endTime').val()?jQuery('#endTime').val():false
+            maxTime: jQuery('#endTime').val() ? jQuery('#endTime').val() : false
         })
     },
 });
@@ -118,9 +120,9 @@ $('#endTime').datetimepicker({
     datepicker: false,
     format: 'H:i',
     formatTime: 'H:i',
-    onShow:function( ct ){
+    onShow: function (ct) {
         this.setOptions({
-            minTime:jQuery('#startTime').val()?jQuery('#startTime').val():false
+            minTime: jQuery('#startTime').val() ? jQuery('#startTime').val() : false
         })
     },
 })
