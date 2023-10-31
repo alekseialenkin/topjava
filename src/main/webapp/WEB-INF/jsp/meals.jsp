@@ -110,12 +110,7 @@
 </div>
 <jsp:include page="fragments/footer.jsp"/>
 </body>
-<script type="text/javascript">
-    const i18n = {};
-    i18n["addTitle"] = '<spring:message code="meal.add"/>';
-    i18n["editTitle"] = '<spring:message code="meal.edit"/>';
-
-    <jsp:include page="fragments/commoni18n.jsp"/>
-
-</script>
+<jsp:include page="fragments/commoni18n.jsp">
+    <jsp:param name="object" value="meal"/>
+</jsp:include>
 </html>
