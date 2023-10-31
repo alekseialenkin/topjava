@@ -29,12 +29,6 @@ $(function () {
             "columns": [
                 {
                     "data": "dateTime",
-                    "render": function (date, type, row) {
-                        if (type === "display") {
-                            return date.substring(0, 10) + " " + date.substring(11, 16);
-                        }
-                        return date;
-                    }
                 },
                 {
                     "data": "description"
