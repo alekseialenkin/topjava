@@ -14,7 +14,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 //https://habr.com/ru/articles/424819/
 @Component
-public class EmailDuplicateValidator implements Validator {
+public class UserValidator implements Validator {
     @Autowired
     private UserService service;
 
@@ -31,6 +31,7 @@ public class EmailDuplicateValidator implements Validator {
     public void validate(Object target, Errors errors) {
         SpringValidatorAdapter validatorAdapter = new SpringValidatorAdapter(validatorFactory);
         validatorAdapter.validate(target, errors);
+
         UserTo user = (UserTo) target;
         UserTo user1 = null;
         try {
