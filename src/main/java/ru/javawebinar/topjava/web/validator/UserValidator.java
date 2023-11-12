@@ -39,7 +39,7 @@ public class UserValidator implements Validator {
         } catch (NotFoundException ignored) {
         }
         if (user1 != null && user.getEmail().equals(user1.getEmail())) {
-            errors.rejectValue("email", "email.duplicate");
+            errors.rejectValue("email", "exception.email.duplicate");
         }
     }
 }
