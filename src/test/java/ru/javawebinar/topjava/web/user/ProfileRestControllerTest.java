@@ -23,6 +23,7 @@ import static ru.javawebinar.topjava.UserTestData.*;
 import static ru.javawebinar.topjava.util.exception.ErrorType.VALIDATION_ERROR;
 import static ru.javawebinar.topjava.web.user.ProfileRestController.REST_URL;
 
+
 class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Autowired
@@ -93,12 +94,25 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void registerNotValid() throws Exception {
-        User user = new User();
+        UserTo user = new UserTo();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(user)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
+        ErrorInfo errorInfo = MatcherFactory.usingEqualsComparator(ErrorInfo.class).readFromJson(action);
+        Assertions.assertEquals(errorInfo.getType(), VALIDATION_ERROR);
+    }
+
+    @Test
+    void registerEmailDuplicate() throws Exception {
+        UserTo adminDuplicate = UsersUtil.asTo(admin);
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(adminDuplicate)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+
         ErrorInfo errorInfo = MatcherFactory.usingEqualsComparator(ErrorInfo.class).readFromJson(action);
         Assertions.assertEquals(errorInfo.getType(), VALIDATION_ERROR);
     }

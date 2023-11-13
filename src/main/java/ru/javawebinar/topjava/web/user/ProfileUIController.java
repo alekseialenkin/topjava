@@ -15,7 +15,6 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/profile")
 public class ProfileUIController extends AbstractUserController {
-
     @GetMapping
     public String profile() {
         return "profile";

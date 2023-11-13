@@ -2,15 +2,11 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.transaction.TransactionSystemException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -24,7 +20,6 @@ import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolationException;
 import java.util.stream.Collectors;
 
 import static ru.javawebinar.topjava.util.exception.ErrorType.*;
@@ -32,8 +27,6 @@ import static ru.javawebinar.topjava.util.exception.ErrorType.*;
 @RestControllerAdvice(annotations = RestController.class)
 @Order(Ordered.HIGHEST_PRECEDENCE + 5)
 public class ExceptionInfoHandler {
-    @Autowired
-    private MessageSource messageSource;
     private static final Logger log = LoggerFactory.getLogger(ExceptionInfoHandler.class);
 
     //  http://stackoverflow.com/a/22358422/548473
@@ -46,7 +39,7 @@ public class ExceptionInfoHandler {
     @ResponseStatus(HttpStatus.CONFLICT)  // 409
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
-        return logAndGetErrorInfo(req, e, true, DATA_ERROR, messageSource.getMessage("exception.email.duplicate", null, LocaleContextHolder.getLocale()));
+        return logAndGetErrorInfo(req, e, true, DATA_ERROR);
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)  // 422
@@ -64,14 +57,14 @@ public class ExceptionInfoHandler {
         return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR, result);
     }
 
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    @ExceptionHandler({ConstraintViolationException.class, TransactionSystemException.class})
-    public ErrorInfo violationError(HttpServletRequest req, ConstraintViolationException e) {
-        String result = e.getConstraintViolations().stream()
-                .map(violation -> String.format("[%s] %s", violation.getPropertyPath(), violation.getMessage()))
-                .collect(Collectors.joining("<br>"));
-        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR, result);
-    }
+//    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+//    @ExceptionHandler({ConstraintViolationException.class, TransactionSystemException.class})
+//    public ErrorInfo violationError(HttpServletRequest req, ConstraintViolationException e) {
+//        String result = e.getConstraintViolations().stream()
+//                .map(violation -> String.format("[%s] %s", violation.getPropertyPath(), violation.getMessage()))
+//                .collect(Collectors.joining("<br>"));
+//        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR, result);
+//    }
 
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
