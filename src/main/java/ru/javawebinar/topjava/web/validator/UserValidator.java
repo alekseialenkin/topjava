@@ -9,15 +9,16 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.service.UserService;
+import ru.javawebinar.topjava.repository.datajpa.DataJpaUserRepository;
 import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.UsersUtil;
-import ru.javawebinar.topjava.util.exception.NotFoundException;
+
 @Component
 public class UserValidator implements Validator {
     @Autowired
-    private UserService service;
+    private DataJpaUserRepository repository;
 
     @Autowired
     @Qualifier("validator")
@@ -35,13 +36,12 @@ public class UserValidator implements Validator {
     public void validate(Object target, Errors errors) {
         SpringValidatorAdapter validatorAdapter = new SpringValidatorAdapter(validatorFactory);
         validatorAdapter.validate(target, errors);
+
         UserTo user = (UserTo) target;
-        UserTo checkableUser = null;
-        try {
-            checkableUser = UsersUtil.asTo(service.getByEmail(user.getEmail()));
-        } catch (NotFoundException ignored) {
-        }
-        if (checkableUser != null && user.getEmail().equals(checkableUser.getEmail())) {
+        User adminTest = repository.getByEmail(user.getEmail());
+        UserTo checkableUser = adminTest == null ? null : UsersUtil.asTo(adminTest);
+
+        if (checkableUser != null && user.getEmail().equals(checkableUser.getEmail()) && adminTest.getRoles().contains(Role.ADMIN)) {
             errors.rejectValue("email", "exception.email.duplicate",
                     messageSource.getMessage("exception.email.duplicate", null, LocaleContextHolder.getLocale()));
         }
