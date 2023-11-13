@@ -106,7 +106,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void registerEmailDuplicate() throws Exception {
-        UserTo adminDuplicate = UsersUtil.asTo(admin);
+        UserTo adminDuplicate = new UserTo(null,"newName", "admin@gmail.com", "newPass",1500);
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(adminDuplicate)))
