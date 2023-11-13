@@ -57,16 +57,6 @@ public class ExceptionInfoHandler {
         return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR, result);
     }
 
-//    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-//    @ExceptionHandler({ConstraintViolationException.class, TransactionSystemException.class})
-//    public ErrorInfo violationError(HttpServletRequest req, ConstraintViolationException e) {
-//        String result = e.getConstraintViolations().stream()
-//                .map(violation -> String.format("[%s] %s", violation.getPropertyPath(), violation.getMessage()))
-//                .collect(Collectors.joining("<br>"));
-//        return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR, result);
-//    }
-
-
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorInfo internalError(HttpServletRequest req, Exception e) {
