@@ -10,15 +10,16 @@ import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.repository.datajpa.DataJpaUserRepository;
+import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.UsersUtil;
+import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 @Component
 public class UserValidator implements Validator {
     @Autowired
-    private DataJpaUserRepository repository;
+    private UserService service;
 
     @Autowired
     @Qualifier("validator")
@@ -38,8 +39,12 @@ public class UserValidator implements Validator {
         validatorAdapter.validate(target, errors);
 
         UserTo user = (UserTo) target;
-        User test = repository.getByEmail(user.getEmail());
-
+        User test;
+        try {
+            test = service.getByEmail(user.getEmail());
+        }catch (NotFoundException e){
+            return;
+        }
         if (test != null) {
             UserTo checkableUser = UsersUtil.asTo(test);
             if (user.getId() != null) {
