@@ -16,6 +16,7 @@ import ru.javawebinar.topjava.util.UsersUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
+//https://habr.com/ru/articles/424819/
 @Component
 public class UserValidator implements Validator {
     @Autowired
@@ -38,26 +39,31 @@ public class UserValidator implements Validator {
         SpringValidatorAdapter validatorAdapter = new SpringValidatorAdapter(validatorFactory);
         validatorAdapter.validate(target, errors);
 
-        UserTo user = (UserTo) target;
-        User test;
-        try {
-            test = service.getByEmail(user.getEmail());
-        }catch (NotFoundException e){
-            return;
+        if (target instanceof UserTo) {
+            UserTo user = (UserTo) target;
+            checkEmailDuplicate(errors, user);
+        } else if (target instanceof User) {
+            User user = (User) target;
+            checkEmailDuplicate(errors,
+                    new UserTo(null, user.getName(), user.getEmail(), user.getPassword(), user.getCaloriesPerDay()));
         }
-        if (test != null) {
-            UserTo checkableUser = UsersUtil.asTo(test);
+    }
+
+    private void checkEmailDuplicate(Errors errors, UserTo user) {
+        try {
+            UserTo checkableUser = UsersUtil.asTo(service.getByEmail(user.getEmail()));
             if (user.getId() != null) {
                 if (!checkableUser.getId().equals(user.getId())) {
                     addError(errors);
                 }
             } else if (SecurityUtil.safeGet() != null) {
-                if (checkableUser.getEmail().equalsIgnoreCase(user.getEmail()) && SecurityUtil.authUserId() != test.id()) {
+                if (checkableUser.getEmail().equalsIgnoreCase(user.getEmail()) && SecurityUtil.authUserId() != checkableUser.id()) {
                     addError(errors);
                 }
             } else if (checkableUser.getEmail().equalsIgnoreCase(user.getEmail())) {
                 addError(errors);
             }
+        } catch (NotFoundException ignored) {
         }
     }
 
