@@ -18,16 +18,17 @@ import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
 public abstract class AbstractUserController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
+
     @Autowired
-    private UserValidator validator;
+    private UserService service;
+
+    @Autowired
+    protected UserValidator validator;
 
     @InitBinder
     private void initBinder(WebDataBinder binder) {
         binder.setValidator(validator);
     }
-
-    @Autowired
-    private UserService service;
 
     public List<User> getAll() {
         log.info("getAll");

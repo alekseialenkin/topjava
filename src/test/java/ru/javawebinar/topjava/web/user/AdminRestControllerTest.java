@@ -163,9 +163,8 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void createEmailDuplicate() throws Exception{
-        UserTo adminDuplicate = new UserTo(null,"newName", "admin@gmail.com", "newPass",1500);
-
+    void createEmailDuplicate() throws Exception {
+        UserTo adminDuplicate = new UserTo(null, "newName", admin.getEmail(), "newPass", 1500);
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))

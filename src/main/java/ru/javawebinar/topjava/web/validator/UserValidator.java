@@ -9,11 +9,11 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
-import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.datajpa.DataJpaUserRepository;
 import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.UsersUtil;
+import ru.javawebinar.topjava.web.SecurityUtil;
 
 @Component
 public class UserValidator implements Validator {
@@ -25,7 +25,7 @@ public class UserValidator implements Validator {
     private LocalValidatorFactoryBean validatorFactory;
 
     @Autowired
-    private MessageSource messageSource;
+    protected MessageSource messageSource;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -38,12 +38,26 @@ public class UserValidator implements Validator {
         validatorAdapter.validate(target, errors);
 
         UserTo user = (UserTo) target;
-        User adminTest = repository.getByEmail(user.getEmail());
-        UserTo checkableUser = adminTest == null ? null : UsersUtil.asTo(adminTest);
+        User test = repository.getByEmail(user.getEmail());
 
-        if (checkableUser != null && user.getEmail().equals(checkableUser.getEmail()) && adminTest.getRoles().contains(Role.ADMIN)) {
-            errors.rejectValue("email", "exception.email.duplicate",
-                    messageSource.getMessage("exception.email.duplicate", null, LocaleContextHolder.getLocale()));
+        if (test != null) {
+            UserTo checkableUser = UsersUtil.asTo(test);
+            if (user.getId() != null) {
+                if (!checkableUser.getId().equals(user.getId())) {
+                    addError(errors);
+                }
+            } else if (SecurityUtil.safeGet() != null) {
+                if (checkableUser.getEmail().equalsIgnoreCase(user.getEmail()) && SecurityUtil.authUserId() != test.id()) {
+                    addError(errors);
+                }
+            } else if (checkableUser.getEmail().equalsIgnoreCase(user.getEmail())) {
+                addError(errors);
+            }
         }
+    }
+
+    private void addError(Errors errors) {
+        errors.rejectValue("email", "exception.email.duplicate",
+                messageSource.getMessage("exception.email.duplicate", null, LocaleContextHolder.getLocale()));
     }
 }
