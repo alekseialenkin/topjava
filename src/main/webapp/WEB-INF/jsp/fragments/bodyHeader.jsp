@@ -26,5 +26,6 @@
                 </button>
             </form:form>
         </sec:authorize>
+        Language : <a href="?language=en">English</a>|<a href="?language=ru">Russian</a>
     </div>
 </nav>
