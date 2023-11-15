@@ -151,14 +151,17 @@ class AdminRestControllerTest extends AbstractControllerTest {
     void createNotValid() throws Exception {
         User user = new User();
         user.setPassword("pass");
+        user.setId(USER_ID + 20);
+        user.setName("");
+        user.setEmail("");
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(admin))
                 .content(jsonWithPassword(user, user.getPassword())))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isUnprocessableEntity());
 
         ErrorInfo errorInfo = MatcherFactory.usingEqualsComparator(ErrorInfo.class).readFromJson(action);
-        Assertions.assertEquals(errorInfo.getType(), ErrorType.APP_ERROR);
+        Assertions.assertEquals(errorInfo.getType(), ErrorType.VALIDATION_ERROR);
     }
 
     @Test

@@ -20,7 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.*;
-import static ru.javawebinar.topjava.util.exception.ErrorType.APP_ERROR;
 import static ru.javawebinar.topjava.util.exception.ErrorType.VALIDATION_ERROR;
 import static ru.javawebinar.topjava.web.user.ProfileRestController.REST_URL;
 
@@ -95,14 +94,18 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void registerNotValid() throws Exception {
-        UserTo user = new UserTo();
+        UserTo userTo = UsersUtil.asTo(user);
+        userTo.setEmail("");
+        userTo.setPassword("");
+        userTo.setName("");
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(user)))
+                .content(JsonUtil.writeValue(userTo)))
                 .andDo(print())
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isUnprocessableEntity());
+
         ErrorInfo errorInfo = MatcherFactory.usingEqualsComparator(ErrorInfo.class).readFromJson(action);
-        Assertions.assertEquals(errorInfo.getType(), APP_ERROR);
+        Assertions.assertEquals(errorInfo.getType(), VALIDATION_ERROR);
     }
 
     @Test

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.MatcherFactory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
@@ -141,5 +143,21 @@ class MealRestControllerTest extends AbstractControllerTest {
 
         ErrorInfo errorInfo = MatcherFactory.usingEqualsComparator(ErrorInfo.class).readFromJson(action);
         Assertions.assertEquals(errorInfo.getType(), ErrorType.VALIDATION_ERROR);
+    }
+
+    //    https://stackoverflow.com/a/42333941    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void createDateTimeDuplicate() throws Exception {
+        Meal meal = getNew();
+        meal.setDateTime(meal7.getDateTime());
+
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user))
+                .content(JsonUtil.writeValue(meal)))
+                .andExpect(status().isConflict());
+
+        ErrorInfo errorInfo = MatcherFactory.usingEqualsComparator(ErrorInfo.class).readFromJson(action);
+        Assertions.assertEquals(errorInfo.getType(), ErrorType.DATA_ERROR);
     }
 }
