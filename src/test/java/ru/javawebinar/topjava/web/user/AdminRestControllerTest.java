@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.javawebinar.topjava.MatcherFactory;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
-import ru.javawebinar.topjava.util.exception.ErrorInfo;
 import ru.javawebinar.topjava.util.exception.ErrorType;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
@@ -151,7 +149,6 @@ class AdminRestControllerTest extends AbstractControllerTest {
     void createNotValid() throws Exception {
         User user = new User();
         user.setPassword("pass");
-        user.setId(USER_ID + 20);
         user.setName("");
         user.setEmail("");
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
@@ -160,8 +157,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .content(jsonWithPassword(user, user.getPassword())))
                 .andExpect(status().isUnprocessableEntity());
 
-        ErrorInfo errorInfo = MatcherFactory.usingEqualsComparator(ErrorInfo.class).readFromJson(action);
-        Assertions.assertEquals(errorInfo.getType(), ErrorType.VALIDATION_ERROR);
+        Assertions.assertTrue(isThisError(action, ErrorType.VALIDATION_ERROR));
     }
 
     @Test
@@ -173,7 +169,6 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .content(jsonWithPassword(adminDuplicate, adminDuplicate.getPassword())))
                 .andExpect(status().isUnprocessableEntity());
 
-        ErrorInfo errorInfo = MatcherFactory.usingEqualsComparator(ErrorInfo.class).readFromJson(action);
-        Assertions.assertEquals(errorInfo.getType(), ErrorType.VALIDATION_ERROR);
+        Assertions.assertTrue(isThisError(action, ErrorType.VALIDATION_ERROR));
     }
 }

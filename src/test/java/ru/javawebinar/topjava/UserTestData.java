@@ -1,8 +1,10 @@
 package ru.javawebinar.topjava;
 
+import org.springframework.test.web.servlet.ResultActions;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.to.UserTo;
+import ru.javawebinar.topjava.util.exception.ErrorInfo;
+import ru.javawebinar.topjava.util.exception.ErrorType;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import java.util.Collections;
@@ -22,6 +24,7 @@ public class UserTestData {
                     (a, e) -> {
                         throw new UnsupportedOperationException();
                     });
+    public static MatcherFactory.Matcher<ErrorInfo> ERROR_INFO_MATCHER = MatcherFactory.usingEqualsComparator(ErrorInfo.class);
 
     public static final int USER_ID = START_SEQ;
     public static final int ADMIN_ID = START_SEQ + 1;
@@ -56,7 +59,8 @@ public class UserTestData {
         return JsonUtil.writeAdditionProps(user, "password", passw);
     }
 
-    public static String jsonWithPassword(UserTo user, String passw) {
-        return JsonUtil.writeAdditionProps(user, "password", passw);
+    public static boolean isThisError(ResultActions action, ErrorType type) throws Exception {
+        ErrorInfo errorInfo = ERROR_INFO_MATCHER.readFromJson(action);
+        return errorInfo.getType().equals(type);
     }
 }

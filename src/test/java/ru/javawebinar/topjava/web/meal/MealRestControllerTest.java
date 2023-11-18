@@ -145,7 +145,8 @@ class MealRestControllerTest extends AbstractControllerTest {
         Assertions.assertEquals(errorInfo.getType(), ErrorType.VALIDATION_ERROR);
     }
 
-    //    https://stackoverflow.com/a/42333941    @Test
+    //    https://stackoverflow.com/a/42333941
+    @Test
     @Transactional(propagation = Propagation.NEVER)
     void createDateTimeDuplicate() throws Exception {
         Meal meal = getNew();

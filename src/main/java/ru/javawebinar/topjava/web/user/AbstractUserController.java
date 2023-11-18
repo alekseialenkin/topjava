@@ -23,7 +23,7 @@ public abstract class AbstractUserController {
     private UserService service;
 
     @Autowired
-    protected UserValidator validator;
+    private UserValidator validator;
 
     @InitBinder
     private void initBinder(WebDataBinder binder) {

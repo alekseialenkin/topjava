@@ -6,12 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.javawebinar.topjava.MatcherFactory;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.UsersUtil;
-import ru.javawebinar.topjava.util.exception.ErrorInfo;
+import ru.javawebinar.topjava.util.exception.ErrorType;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
@@ -20,7 +19,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.*;
-import static ru.javawebinar.topjava.util.exception.ErrorType.VALIDATION_ERROR;
 import static ru.javawebinar.topjava.web.user.ProfileRestController.REST_URL;
 
 
@@ -94,7 +92,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void registerNotValid() throws Exception {
-        UserTo userTo = UsersUtil.asTo(user);
+        UserTo userTo = new UserTo();
         userTo.setEmail("");
         userTo.setPassword("");
         userTo.setName("");
@@ -104,20 +102,18 @@ class ProfileRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
 
-        ErrorInfo errorInfo = MatcherFactory.usingEqualsComparator(ErrorInfo.class).readFromJson(action);
-        Assertions.assertEquals(errorInfo.getType(), VALIDATION_ERROR);
+        Assertions.assertTrue(isThisError(action, ErrorType.VALIDATION_ERROR));
     }
 
     @Test
     void registerEmailDuplicate() throws Exception {
-        UserTo adminDuplicate = new UserTo(null,"newName", "admin@gmail.com", "newPass",1500);
+        UserTo adminDuplicate = new UserTo(null, "newName", admin.getEmail(), "newPass", 1500);
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(adminDuplicate)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
 
-        ErrorInfo errorInfo = MatcherFactory.usingEqualsComparator(ErrorInfo.class).readFromJson(action);
-        Assertions.assertEquals(errorInfo.getType(), VALIDATION_ERROR);
+        Assertions.assertTrue(isThisError(action, ErrorType.VALIDATION_ERROR));
     }
 }

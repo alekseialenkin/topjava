@@ -5,7 +5,8 @@
 
 <nav class="navbar navbar-dark bg-dark py-0">
     <div class="container">
-        <a href="meals" class="navbar-brand"><img src="resources/images/icon-meal.png"> <spring:message code="app.title"/></a>
+        <a href="meals" class="navbar-brand"><img src="resources/images/icon-meal.png"> <spring:message
+                code="app.title"/></a>
         <sec:authorize access="isAuthenticated()">
             <form:form class="form-inline my-2" action="logout" method="post">
                 <sec:authorize access="hasRole('ADMIN')">
@@ -26,6 +27,11 @@
                 </button>
             </form:form>
         </sec:authorize>
-        Language : <a href="?language=en">English</a>|<a href="?language=ru">Russian</a>
     </div>
+    <%--        https://stackoverflow.com/questions/2989888/get-request-url-in-jsp-which-is-forwarded-by-servlet--%>
+    Language : <a href="${requestScope['javax.servlet.forward.request_uri']}?language=en">English</a>|
+    <a href="${requestScope['javax.servlet.forward.request_uri']}?language=ru">Russian</a>
 </nav>
+<script type="text/javascript">
+    var locale = "${pageContext.response.locale}";
+</script>

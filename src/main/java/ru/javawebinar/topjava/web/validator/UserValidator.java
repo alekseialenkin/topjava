@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.web.validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -23,11 +22,10 @@ public class UserValidator implements Validator {
     private UserService service;
 
     @Autowired
-    @Qualifier("validator")
     private LocalValidatorFactoryBean validatorFactory;
 
     @Autowired
-    protected MessageSource messageSource;
+    private MessageSource messageSource;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -44,8 +42,7 @@ public class UserValidator implements Validator {
             checkEmailDuplicate(errors, user);
         } else if (target instanceof User) {
             User user = (User) target;
-            checkEmailDuplicate(errors,
-                    new UserTo(null, user.getName(), user.getEmail(), user.getPassword(), user.getCaloriesPerDay()));
+            checkEmailDuplicate(errors, UsersUtil.asTo(user));
         }
     }
 
@@ -57,10 +54,10 @@ public class UserValidator implements Validator {
                     addError(errors);
                 }
             } else if (SecurityUtil.safeGet() != null) {
-                if (checkableUser.getEmail().equalsIgnoreCase(user.getEmail()) && SecurityUtil.authUserId() != checkableUser.id()) {
+                if (checkableUser.getEmail().equals(user.getEmail()) && SecurityUtil.authUserId() != checkableUser.id()) {
                     addError(errors);
                 }
-            } else if (checkableUser.getEmail().equalsIgnoreCase(user.getEmail())) {
+            } else if (checkableUser.getEmail().equals(user.getEmail())) {
                 addError(errors);
             }
         } catch (NotFoundException ignored) {
