@@ -6,8 +6,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.to.UserTo;
@@ -22,7 +20,7 @@ public class UserValidator implements Validator {
     private UserService service;
 
     @Autowired
-    private LocalValidatorFactoryBean validatorFactory;
+    private Validator validator;
 
     @Autowired
     private MessageSource messageSource;
@@ -34,8 +32,7 @@ public class UserValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        SpringValidatorAdapter validatorAdapter = new SpringValidatorAdapter(validatorFactory);
-        validatorAdapter.validate(target, errors);
+        validator.validate(target, errors);
 
         if (target instanceof UserTo) {
             UserTo user = (UserTo) target;
