@@ -11,7 +11,6 @@ import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.UsersUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
-import ru.javawebinar.topjava.web.SecurityUtil;
 
 //https://habr.com/ru/articles/424819/
 @Component
@@ -48,8 +47,6 @@ public class UserValidator implements Validator {
                 if (!checkedUser.getId().equals(user.getId())) {
                     addError(errors);
                 }
-            } else if (SecurityUtil.safeGet() != null) {
-                addError(errors);
             } else {
                 addError(errors);
             }
