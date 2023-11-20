@@ -45,16 +45,18 @@ public class UserValidator implements Validator {
 
     private void checkEmailDuplicate(Errors errors, UserTo user) {
         try {
-            UserTo checkableUser = UsersUtil.asTo(service.getByEmail(user.getEmail()));
+            UserTo checkedUser = UsersUtil.asTo(service.getByEmail(user.getEmail().toLowerCase()));
             if (user.getId() != null) {
-                if (!checkableUser.getId().equals(user.getId())) {
+                if (!checkedUser.getId().equals(user.getId())) {
                     addError(errors);
                 }
             } else if (SecurityUtil.safeGet() != null) {
-                if (checkableUser.getEmail().equals(user.getEmail()) && SecurityUtil.authUserId() != checkableUser.id()) {
+                if (SecurityUtil.authUserId() != checkedUser.id()) {
+                    addError(errors);
+                } else {
                     addError(errors);
                 }
-            } else if (checkableUser.getEmail().equals(user.getEmail())) {
+            } else {
                 addError(errors);
             }
         } catch (NotFoundException ignored) {

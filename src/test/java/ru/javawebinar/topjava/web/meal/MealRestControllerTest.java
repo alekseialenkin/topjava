@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.web.meal;
 
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -9,10 +8,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javawebinar.topjava.MatcherFactory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
-import ru.javawebinar.topjava.util.exception.ErrorInfo;
 import ru.javawebinar.topjava.util.exception.ErrorType;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
@@ -22,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javawebinar.topjava.ErrorTestData.isThisError;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
@@ -141,8 +139,7 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(meal)))
                 .andExpect(status().isUnprocessableEntity());
 
-        ErrorInfo errorInfo = MatcherFactory.usingEqualsComparator(ErrorInfo.class).readFromJson(action);
-        Assertions.assertEquals(errorInfo.getType(), ErrorType.VALIDATION_ERROR);
+        isThisError(action, ErrorType.VALIDATION_ERROR);
     }
 
     //    https://stackoverflow.com/a/42333941
@@ -158,7 +155,6 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(meal)))
                 .andExpect(status().isConflict());
 
-        ErrorInfo errorInfo = MatcherFactory.usingEqualsComparator(ErrorInfo.class).readFromJson(action);
-        Assertions.assertEquals(errorInfo.getType(), ErrorType.DATA_ERROR);
+        isThisError(action, ErrorType.DATA_ERROR);
     }
 }

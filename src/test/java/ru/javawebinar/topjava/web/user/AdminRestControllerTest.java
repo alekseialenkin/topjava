@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.web.user;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -17,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javawebinar.topjava.ErrorTestData.isThisError;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.*;
 
@@ -157,7 +157,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .content(jsonWithPassword(user, user.getPassword())))
                 .andExpect(status().isUnprocessableEntity());
 
-        Assertions.assertTrue(isThisError(action, ErrorType.VALIDATION_ERROR));
+        isThisError(action, ErrorType.VALIDATION_ERROR);
     }
 
     @Test
@@ -169,6 +169,6 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .content(jsonWithPassword(adminDuplicate, adminDuplicate.getPassword())))
                 .andExpect(status().isUnprocessableEntity());
 
-        Assertions.assertTrue(isThisError(action, ErrorType.VALIDATION_ERROR));
+        isThisError(action, ErrorType.VALIDATION_ERROR);
     }
 }
