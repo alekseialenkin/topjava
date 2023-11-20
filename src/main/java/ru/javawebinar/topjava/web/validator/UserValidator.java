@@ -35,10 +35,8 @@ public class UserValidator implements Validator {
         validator.validate(target, errors);
 
         if (target instanceof UserTo) {
-            UserTo user = (UserTo) target;
-            checkEmailDuplicate(errors, user);
-        } else if (target instanceof User) {
-            User user = (User) target;
+            checkEmailDuplicate(errors, (UserTo) target);
+        } else if (target instanceof User user) {
             checkEmailDuplicate(errors, UsersUtil.asTo(user));
         }
     }
@@ -51,11 +49,7 @@ public class UserValidator implements Validator {
                     addError(errors);
                 }
             } else if (SecurityUtil.safeGet() != null) {
-                if (SecurityUtil.authUserId() != checkedUser.id()) {
-                    addError(errors);
-                } else {
-                    addError(errors);
-                }
+                addError(errors);
             } else {
                 addError(errors);
             }
