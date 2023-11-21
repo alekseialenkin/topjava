@@ -43,11 +43,7 @@ public class UserValidator implements Validator {
     private void checkEmailDuplicate(Errors errors, UserTo user) {
         try {
             UserTo checkedUser = UsersUtil.asTo(service.getByEmail(user.getEmail().toLowerCase()));
-            if (user.getId() != null) {
-                if (!checkedUser.getId().equals(user.getId())) {
-                    addError(errors);
-                }
-            } else {
+            if (!checkedUser.getId().equals(user.getId())) {
                 addError(errors);
             }
         } catch (NotFoundException ignored) {
